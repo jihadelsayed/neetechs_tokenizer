@@ -1,4 +1,3 @@
-# Placeholder
 from setuptools import setup, find_packages
 
 setup(
@@ -7,6 +6,7 @@ setup(
     description='Arabic root-pattern tokenizer with grammar correction and translation',
     author='Sayed Jihad Al Sayed',
     author_email='jelsayed@uab.edu',
+    license='MIT',
     packages=find_packages(),
     install_requires=[
         'transformers>=4.30.0',
@@ -20,7 +20,7 @@ setup(
     classifiers=[
         'Programming Language :: Python :: 3',
         'Natural Language :: Arabic',
-        'License :: OSI Approved :: MIT License'
+        'Operating System :: OS Independent'
     ],
     python_requires='>=3.8'
 )
