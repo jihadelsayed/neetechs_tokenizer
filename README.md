@@ -94,14 +94,14 @@ not the laziness of surface-level text.
 ## 📦 Install (coming soon)
 
 ```bash
-pip install neetechs-arabic-ai
+pip install neetechs_tokenizer
 ```
 
 Or clone:
 
 ```bash
-git clone https://github.com/neetechs/arabiq
-cd arabiq
+git clone https://github.com/neetechs/neetechs_tokenizer
+cd neetechs_tokenizer
 ```
 
 ---
@@ -111,7 +111,7 @@ cd arabiq
 We’re building a team of devs, linguists, and visionaries.  
 Want to help shape the future of Arabic-native AI?
 
-> Contact: [jelsayed@uab.edu](mailto:jelsayed@uab.edu)  
+> Contact: [info@neetechs.com](mailto:info@neetechs.com)  
 > IG: [@neetechs](https://instagram.com/neetechs)
 
 ---

@@ -1,0 +1,7 @@
+transformers>=4.30.0
+torch
+arabic_reshaper
+python-bidi
+nltk
+tqdm
+requests
