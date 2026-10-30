@@ -1,6 +1,7 @@
 """Arabic-aware word tokenization with optional validated clitic segmentation."""
 import re
 import unicodedata
+from copy import deepcopy
 from .morphology import word_analyzer
 from .utils import clean_text, is_arabic_word, normalize_arabic, remove_diacritics
 
@@ -97,7 +98,7 @@ def analyze_text(text: str, *, include_segments: bool = False, include_original_
             "token": token,
             "start": match.start(),
             "end": match.end(),
-            "analyses": analyses,
+            "analyses": deepcopy(analyses),
         }
         if include_original_offsets:
             if source_map is None:

@@ -134,6 +134,13 @@ class SentenceAnalysisTests(unittest.TestCase):
         self.assertEqual(mocked.call_count, 1)
         self.assertEqual(rows[0]["analyses"], rows[1]["analyses"])
 
+    def test_repeated_token_results_do_not_share_mutable_analyses(self):
+        records = analyze_text("مكتوب مكتوب", include_segments=True)
+        self.assertTrue(records[0]["analyses"])
+        original = records[1]["analyses"][0]["root"]
+        records[0]["analyses"][0]["root"] = "modified"
+        self.assertEqual(records[1]["analyses"][0]["root"], original)
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):
