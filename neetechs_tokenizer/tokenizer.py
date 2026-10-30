@@ -1,5 +1,6 @@
 """Arabic-aware word tokenization with optional validated clitic segmentation."""
 import re
+import unicodedata
 from .morphology import word_analyzer
 from .utils import clean_text, is_arabic_word
 
@@ -45,7 +46,32 @@ def analyze_tokens(tokens: list[str]) -> list[dict]:
     return analyzed
 
 
-def analyze_text(text: str, *, include_segments: bool = False) -> list[dict]:
+
+def _original_offset_map(text: str, normalized: str) -> list[tuple[int, int]] | None:
+    """Map normalized character positions to original spans by combining cluster.
+
+    Returns None if normalization crosses a cluster boundary in a way that
+    prevents reliable alignment (for example, some cross-character forms).
+    """
+    clusters = []
+    for index, char in enumerate(text):
+        if clusters and unicodedata.combining(char):
+            previous, start, _ = clusters[-1]
+            clusters[-1] = (previous + char, start, index + 1)
+        else:
+            clusters.append((char, index, index + 1))
+    expanded = []
+    for value, start, end in clusters:
+        from .utils import normalize_arabic, remove_diacritics
+        rendered = remove_diacritics(normalize_arabic(value))
+        expanded.extend((ch, start, end) for ch in rendered)
+    while expanded and expanded[0][0].isspace():
+        expanded.pop(0)
+    while expanded and expanded[-1][0].isspace():
+        expanded.pop()
+    return expanded if "".join(ch for ch, _, _ in expanded) == normalized else None
+
+def analyze_text(text: str, *, include_segments: bool = False, include_original_offsets: bool = False) -> list[dict]:
     """Analyze a normalized sentence token-by-token without destructive splitting.
 
     Each result preserves the surface token and all available morphology
@@ -56,6 +82,7 @@ def analyze_text(text: str, *, include_segments: bool = False) -> list[dict]:
         raise TypeError("text must be a string")
     normalized = clean_text(text)
     results = []
+    source_map = _original_offset_map(text, normalized) if include_original_offsets else None
     for match in WORD_RE.finditer(normalized):
         token = match.group()
         analyses = word_analyzer(token)["analyses"] if is_arabic_word(token) else []
@@ -65,6 +92,13 @@ def analyze_text(text: str, *, include_segments: bool = False) -> list[dict]:
             "end": match.end(),
             "analyses": analyses,
         }
+        if include_original_offsets:
+            if source_map is None:
+                record["original_start"] = None
+                record["original_end"] = None
+            else:
+                record["original_start"] = source_map[match.start()][1]
+                record["original_end"] = source_map[match.end() - 1][2]
         if include_segments:
             if analyses:
                 best = analyses[0]
