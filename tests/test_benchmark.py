@@ -74,6 +74,27 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(result["ambiguous_top_root_cases"], 1)
         self.assertEqual(result["uniquely_ranked_cases"], 0)
 
+    def test_top_one_uses_highest_score_even_if_unsorted(self):
+        analyses = [{"root": "كتب", "score": 0.2},
+                    {"root": "علم", "score": 0.9}]
+        with patch("neetechs_tokenizer.benchmark.word_analyzer",
+                   return_value={"analyses": analyses}):
+            result = benchmark_cases([{"word": "example", "root": "علم"}])
+        self.assertEqual(result["top_one_correct"], 1)
+        self.assertEqual(result["top_one_root_accuracy"], 1.0)
+        self.assertEqual(result["unambiguous_top_root_accuracy"], 1.0)
+
+    def test_top_one_is_invariant_to_input_order(self):
+        analyses = [{"root": "علم", "score": 0.9},
+                    {"root": "كتب", "score": 0.9}]
+        outputs = []
+        for ordering in (analyses, list(reversed(analyses))):
+            with patch("neetechs_tokenizer.benchmark.word_analyzer",
+                       return_value={"analyses": ordering}):
+                outputs.append(benchmark_cases([{"word": "example", "root": "علم"}]))
+        self.assertEqual(outputs[0]["top_one_correct"], outputs[1]["top_one_correct"])
+        self.assertEqual(outputs[0]["ambiguous_top_root_cases"], 1)
+
     def test_empty(self):
         self.assertIsNone(benchmark_cases([])["coverage"])
 

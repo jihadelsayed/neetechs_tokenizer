@@ -42,15 +42,18 @@ def benchmark_cases(cases):
         expected = _reference_roots(case, index)
         predicted = word_analyzer(case["word"])["analyses"]
         roots = {a["root"] for a in predicted}
-        top_root = predicted[0]["root"] if predicted else None
+        # Select among maximum-score roots, independent of input order.
+        # Equal-score roots use deterministic alphabetical tie-breaking;
+        # top_root_tie_cases reports where this is not evidence-based.
+        best_score = max((a["score"] for a in predicted), default=None)
+        top_roots = {a["root"] for a in predicted if a["score"] == best_score}
+        top_root = min(top_roots) if top_roots else None
         if top_root in expected:
             top_one_correct += 1
         # A shared maximal score is not a confident top-1 prediction.
         # Count distinct roots only; grammatical readings of one root
         # should not be misclassified as lexical ambiguity.
         if predicted:
-            best_score = max(a["score"] for a in predicted)
-            top_roots = {a["root"] for a in predicted if a["score"] == best_score}
             if len(top_roots) > 1:
                 ambiguous_top += 1
             else:
