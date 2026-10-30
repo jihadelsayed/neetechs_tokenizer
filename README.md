@@ -70,3 +70,7 @@ The analyzer generates reversible prefix/stem/suffix combinations with `priority
 ## v0.7: quality baseline
 
 The bundled `data/regression.json` corpus contains 20 small, manually selected positive and negative cases. `tests/test_regression.py` checks these expected roots, forms, surface segmentations, unknown-word behavior, preserved ambiguity, and duplicate analysis removal. This is **not** a statistical evaluation dataset; coverage is deliberately narrow. Run `python -m unittest discover -s tests -v` before releasing. The quality gate does not claim support for words outside these reviewed examples.
+
+## v0.8: first weak-root forms
+
+`analyze_weak_verb()` recognizes a small set of **attested** hollow and defective verbs, for example قال/يقول/قل (قول), باع/يبيع/بع (بيع), and دعا/يدعو/ادع (دعو). The mappings are lexeme-specific, not productive rules. Unknown weak verbs remain unsupported and must not be assigned guessed roots. Full diacritics, weak-root inflection, and context-based disambiguation remain future work.

@@ -6,6 +6,7 @@ from .candidates import priority_identifier
 from .lexicon import generate_form, load_lexicon
 from .conjugation import analyze_perfect
 from .verb_forms import analyze_imperfect, analyze_imperative
+from .weak_forms import analyze_weak_verb
 
 
 def _ranking(analysis: dict) -> tuple:
@@ -46,6 +47,7 @@ def word_analyzer(word: str) -> dict:
     analyses.extend(analyze_perfect(normalized))
     analyses.extend(analyze_imperfect(normalized))
     analyses.extend(analyze_imperative(normalized))
+    analyses.extend(analyze_weak_verb(normalized))
     # Collapse identical analyses caused by overlapping lexical/rule paths,
     # but preserve genuinely different grammatical interpretations.
     unique = {}
