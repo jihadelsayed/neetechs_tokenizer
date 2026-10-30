@@ -82,6 +82,18 @@ def wordAnalyzer(word: str) -> dict:
     return word_analyzer(word)
 
 
-def get_root(word: str) -> str | None:
+def get_root(word: str, *, require_unique: bool = False) -> str | None:
+    """Return top root, or abstain on top-score root ties in strict mode.
+
+    Strict mode handles only *ties* between different roots. It does not
+    certify that a unique top-ranked root is linguistically correct.
+    """
     matches = word_analyzer(word)["analyses"]
-    return matches[0]["root"] if matches else None
+    if not matches:
+        return None
+    if require_unique:
+        best_score = matches[0]["score"]
+        roots = {a["root"] for a in matches if a["score"] == best_score}
+        if len(roots) > 1:
+            return None
+    return matches[0]["root"]

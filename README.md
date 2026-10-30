@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.9 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.10 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -140,3 +140,7 @@ The benchmark now identifies tied top-scoring **distinct roots** instead of pret
 ## v0.9.9 benchmark denominator correction
 
 `unambiguous_top_root_accuracy` now excludes both root ties and abstentions (words without any analysis). New counts `uniquely_ranked_cases` and `abstained_cases` expose the denominator and missing coverage explicitly. This prevents unsupported inputs from silently lowering the accuracy metric for uniquely ranked predictions. No new linguistic ranking weights were introduced.
+
+## v0.9.10 conservative root lookup
+
+Use `get_root(word, require_unique=True)` to return `None` when different top-scoring roots are tied. The default `get_root(word)` behavior stays unchanged. This protects callers from treating alphabetical tie breaks as linguistic evidence. Strict lookup is not a correctness guarantee; it only detects tied root scores.
