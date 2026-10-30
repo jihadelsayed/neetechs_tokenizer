@@ -81,6 +81,18 @@ class ArabicTokenizerTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_lexicon({"schema_version": 2, "entries": []})
 
+    def test_rootless_pattern_is_rejected(self):
+        with self.assertRaises(ValueError):
+            validate_lexicon({"schema_version": 1, "entries": [
+                {"surface": "كتاب", "root": "كتب", "pattern": "كتاب", "pos": "noun"}
+            ]})
+
+    def test_duplicate_placeholder_is_rejected(self):
+        with self.assertRaises(ValueError):
+            validate_lexicon({"schema_version": 1, "entries": [
+                {"surface": "كتبب", "root": "كتب", "pattern": "فعلل", "pos": "noun"}
+            ]})
+
     def test_bad_pattern_rejected(self):
         with self.assertRaises(ValueError):
             validate_lexicon({"schema_version": 1, "entries": [

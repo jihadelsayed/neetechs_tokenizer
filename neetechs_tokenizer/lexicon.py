@@ -10,6 +10,8 @@ def generate_form(root: str, pattern: str) -> str:
     """Substitute a sound triliteral root into an unvowelled template."""
     if len(root) != 3:
         raise ValueError("Only triliteral roots are supported")
+    if any(pattern.count(marker) != 1 for marker in "فعل"):
+        raise ValueError("Pattern requires exactly one of each root placeholder")
     return "".join(dict(zip("فعل", root)).get(c, c) for c in pattern)
 
 
