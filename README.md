@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.8 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.9 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -136,3 +136,7 @@ The external benchmark now reports `top_one_root_accuracy` separately from `root
 ## v0.9.8 uncertainty-aware ranking evaluation
 
 The benchmark now identifies tied top-scoring **distinct roots** instead of pretending that alphabetical tie-breaking is linguistic evidence. `ambiguous_top_root_cases` counts unresolved root ties. `unambiguous_top_root_accuracy` measures top-root correctness only where no distinct-root tie occurred. Grammatical ambiguity (e.g., person/gender readings sharing one root) does not count as a root tie. No score calibration or new ranking weights are claimed.
+
+## v0.9.9 benchmark denominator correction
+
+`unambiguous_top_root_accuracy` now excludes both root ties and abstentions (words without any analysis). New counts `uniquely_ranked_cases` and `abstained_cases` expose the denominator and missing coverage explicitly. This prevents unsupported inputs from silently lowering the accuracy metric for uniquely ranked predictions. No new linguistic ranking weights were introduced.

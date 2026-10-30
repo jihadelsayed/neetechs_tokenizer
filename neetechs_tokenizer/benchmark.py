@@ -18,6 +18,7 @@ def benchmark_cases(cases):
     top_one_correct = 0
     ambiguous_top = 0
     unique_top_correct = 0
+    uniquely_ranked = 0
     errors = []
     for index, case in enumerate(cases):
         if not isinstance(case, dict) or not isinstance(case.get("word"), str) or not isinstance(case.get("root"), str):
@@ -35,8 +36,10 @@ def benchmark_cases(cases):
             top_roots = {a["root"] for a in predicted if a["score"] == best_score}
             if len(top_roots) > 1:
                 ambiguous_top += 1
-            elif top_root == case["root"]:
-                unique_top_correct += 1
+            else:
+                uniquely_ranked += 1
+                if top_root == case["root"]:
+                    unique_top_correct += 1
         if roots:
             supported += 1
         if case["root"] in roots:
@@ -49,7 +52,10 @@ def benchmark_cases(cases):
             "top_one_root_accuracy": top_one_correct / n if n else None,
             "top_one_correct": top_one_correct,
             "ambiguous_top_root_cases": ambiguous_top,
-            "unambiguous_top_root_accuracy": unique_top_correct / (n - ambiguous_top) if n > ambiguous_top else None,
+            "unambiguous_top_root_accuracy": unique_top_correct / uniquely_ranked if uniquely_ranked else None,
+            "uniquely_ranked_cases": uniquely_ranked,
+            "abstained_cases": n - supported,
+            "top_root_tie_cases": ambiguous_top,
             "top_one_errors": n - top_one_correct,
             "errors": errors,
             "note": "Measured only against the supplied annotations. No claim of independently verified labels."}
