@@ -20,8 +20,14 @@ def main():
                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                   check=False, timeout=120)
             exit_code, output = proc.returncode, proc.stdout
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            exit_code, output = 1, f"{type(exc).__name__}: {exc}"
+        except subprocess.TimeoutExpired as exc:
+            # Python may return bytes here even with text=True.
+            partial = exc.stdout or b""
+            if isinstance(partial, bytes):
+                partial = partial.decode("utf-8", errors="replace")
+            exit_code, output = 124, f"TimeoutExpired: {exc}\\n{partial}"
+        except OSError as exc:
+            exit_code, output = 1, f"OSError: {exc}"
         passed = exit_code == 0
         if name == "unit_tests":
             counts = re.findall(r"(?m)^Ran ([0-9]+) tests? in [^\n]+$", output)

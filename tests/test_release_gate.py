@@ -75,3 +75,18 @@ class ReleaseProcessFailureTests(unittest.TestCase):
                     with contextlib.redirect_stdout(io.StringIO()):
                         status = verify_release.main()
         self.assertEqual(status, 1)
+
+class TimeoutDiagnosticsTests(unittest.TestCase):
+    def test_partial_timeout_output_is_reported(self):
+        import json
+        import subprocess
+        error = subprocess.TimeoutExpired("python", 120, output=b"partial output")
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(verify_release, "ROOT", Path(directory)):
+                with patch.object(verify_release.subprocess, "run", side_effect=error):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        result = verify_release.main()
+            report = json.loads((Path(directory) / "release-check-results.json").read_text(encoding="utf-8"))
+        self.assertEqual(result, 1)
+        self.assertEqual(report["checks"]["unit_tests"]["exit_code"], 124)
+        self.assertIn("partial output", report["checks"]["unit_tests"]["output"])

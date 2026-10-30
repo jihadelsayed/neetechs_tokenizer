@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.20 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.21 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -184,3 +184,7 @@ When unittest output contains multiple execution summaries, the release gate use
 ## v0.9.20 release-gate regex hardening
 
 The release gate now requires a standalone unittest summary line (`Ran N tests in ...`), preventing unrelated log text from satisfying the test-count check. Corrected the previous regression fixture to contain actual newlines. Eight focused release-check scenarios passed in an isolated local checkout; the full current repository suite remains unverified.
+
+## v0.9.21 timeout diagnostics
+
+When a test process times out, the release report now preserves its partial output, including byte output returned by Python's timeout exception. A timeout receives exit code 124 in the report. Added a targeted regression test; the complete current-revision suite still needs execution.
