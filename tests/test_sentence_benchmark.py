@@ -24,8 +24,9 @@ class SentenceBenchmarkTests(unittest.TestCase):
 
     def test_cache_reduces_morphology_calls(self):
         from unittest.mock import patch
-        import neetechs_tokenizer.tokenizer as tokenizer_module
-        import scripts.benchmark_sentence_cache as benchmark_module
+        from importlib import import_module
+        tokenizer_module = import_module("neetechs_tokenizer.tokenizer")
+        benchmark_module = import_module("scripts.benchmark_sentence_cache")
 
         sentence = " ".join(["مكتوب", "الكاتب"] * 200)
         with patch.object(tokenizer_module, "word_analyzer",
