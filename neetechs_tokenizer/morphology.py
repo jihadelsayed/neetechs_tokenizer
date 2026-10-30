@@ -56,6 +56,9 @@ def word_analyzer(word: str) -> dict:
                 })
     from .conjugation import analyze_perfect
     analyses.extend(analyze_perfect(normalized))
+    from .verb_forms import analyze_imperfect, analyze_imperative
+    analyses.extend(analyze_imperfect(normalized))
+    analyses.extend(analyze_imperative(normalized))
     analyses.sort(key=lambda a: (-a["score"], a["root"], a["stem"]))
     return {"word": word, "normalized": normalized, "analyses": analyses}
 

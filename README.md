@@ -58,3 +58,7 @@ Repository: https://github.com/jihadelsayed/neetechs_tokenizer · MIT License
 ## v0.4: experimental perfect-tense recognition
 
 `analyze_perfect('كتبت')` yields multiple person/gender readings because short vowels are not written. `word_analyzer('فتحتم')` now also includes validated past-tense analyses. Only exact sound-triliteral and currently attested Form X perfect stems are considered; imperfect, imperative, weak roots, gemination, and most clitic interactions are **not** implemented. The analyzer does not infer grammatical context.
+
+## v0.5: reviewed imperfect and imperative forms
+
+`analyze_imperfect('يكتب')`, `analyze_imperfect('تكتبون')`, and `analyze_imperative('اكتب')` use explicitly reviewed Form I stem lists. Unvowelled ambiguity is retained, and these results are also available via `wordAnalyzer()`. This is not exhaustive: weak roots, Form II–X imperfect derivation, jussive/subjunctive, imperative plurals, and sentence-level interpretation are not yet supported. Affix compatibility remains limited.
