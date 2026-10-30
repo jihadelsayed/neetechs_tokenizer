@@ -54,6 +54,8 @@ def word_analyzer(word: str) -> dict:
                     "source": "bundled_lexicon_v1",
                     "score": round(1.0 - 0.05 * (len(prefix_parts) + len(suffix_parts)), 2),
                 })
+    from .conjugation import analyze_perfect
+    analyses.extend(analyze_perfect(normalized))
     analyses.sort(key=lambda a: (-a["score"], a["root"], a["stem"]))
     return {"word": word, "normalized": normalized, "analyses": analyses}
 

@@ -54,3 +54,7 @@ The JSON-compatible word_analyzer(word) result contains word, normalized, and an
 Expand the versioned lexicon, strengthen affix compatibility rules, add orthographic transformations, ambiguity evaluation, and corpus-backed regression tests before attempting ML-based token compression or language modeling. Keep tokenizer segmentation separate from root analysis and later semantic analysis.
 
 Repository: https://github.com/jihadelsayed/neetechs_tokenizer · MIT License
+
+## v0.4: experimental perfect-tense recognition
+
+`analyze_perfect('كتبت')` yields multiple person/gender readings because short vowels are not written. `word_analyzer('فتحتم')` now also includes validated past-tense analyses. Only exact sound-triliteral and currently attested Form X perfect stems are considered; imperfect, imperative, weak roots, gemination, and most clitic interactions are **not** implemented. The analyzer does not infer grammatical context.
