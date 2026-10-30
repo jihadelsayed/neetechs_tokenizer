@@ -96,6 +96,20 @@ class SentenceAnalysisTests(unittest.TestCase):
         self.assertEqual(tokenize(sentence, split_clitics=False),
                          ["café", "١٢٫٥", "العربية"])
 
+    def test_letter_digit_boundary_and_ascii_d(self):
+        from neetechs_tokenizer import tokenize
+        samples = {
+            "don’t": ["don’t"],
+            "day": ["day"],
+            "abc123": ["abc", "123"],
+            "d123": ["d", "123"],
+            "café123": ["café", "123"],
+        }
+        for text, expected in samples.items():
+            with self.subTest(text=text):
+                self.assertEqual(tokenize(text, split_clitics=False), expected)
+                self.assertEqual([r["token"] for r in analyze_text(text)], expected)
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):

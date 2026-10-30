@@ -4,7 +4,7 @@ import unicodedata
 from .morphology import word_analyzer
 from .utils import clean_text, is_arabic_word, normalize_arabic, remove_diacritics
 
-WORD_RE = re.compile(r"[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]+|[^\\W\\d_]+(?:['’][^\\W\\d_]+)?|[0-9\u0660-\u0669\u06F0-\u06F9]+(?:[.,\u066B\u066C][0-9\u0660-\u0669\u06F0-\u06F9]+)*|[^\s]", re.UNICODE)
+WORD_RE = re.compile(r"[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]+|[^\W\d_]+(?:['’][^\W\d_]+)?|[0-9\u0660-\u0669\u06F0-\u06F9]+(?:[.,\u066B\u066C][0-9\u0660-\u0669\u06F0-\u06F9]+)*|[^\s]", re.UNICODE)
 
 
 def tokenize(text: str, *, split_clitics: bool = True) -> list[str]:
