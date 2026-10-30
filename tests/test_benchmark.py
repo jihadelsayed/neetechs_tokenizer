@@ -49,6 +49,8 @@ class BenchmarkTests(unittest.TestCase):
             result = benchmark_cases([{"word": "مثال", "roots": ["كتب", "كبت"]}])
         self.assertEqual(result["root_recall_at_any_candidate"], 1.0)
         self.assertEqual(result["top_one_root_accuracy"], 1.0)
+        self.assertEqual(result["unambiguous_top_root_accuracy"], 1.0)
+        self.assertEqual(result["uniquely_ranked_cases"], 1)
 
     def test_invalid_multiple_annotations(self):
         for case in (

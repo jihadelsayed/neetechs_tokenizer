@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.11 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.12 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -148,3 +148,7 @@ Use `get_root(word, require_unique=True)` to return `None` when different top-sc
 ## v0.9.11 accepted root sets
 
 Evaluation inputs support either a legacy `root` string or a nonempty `roots` array when multiple analyses are accepted by independent annotators. A prediction counts as correct when its root belongs to that set; annotations are validated to prevent empty, duplicated, or mixed schemas. This avoids marking an acceptable root as a false prediction simply because a gold label was ambiguous. The benchmark remains unverified against independent data.
+
+## v0.9.12 benchmark fix
+
+Fixed the unambiguous top-root accuracy calculation for cases using a `roots` array. It now checks the accepted root set, consistent with candidate recall and top-one scoring. Expanded the regression assertion to cover this field.

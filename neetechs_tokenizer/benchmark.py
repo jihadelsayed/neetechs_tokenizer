@@ -55,7 +55,7 @@ def benchmark_cases(cases):
                 ambiguous_top += 1
             else:
                 uniquely_ranked += 1
-                if top_root == case["root"]:
+                if top_root in expected:
                     unique_top_correct += 1
         if roots:
             supported += 1
