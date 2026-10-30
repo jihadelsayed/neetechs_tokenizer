@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.25 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.26 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -204,3 +204,7 @@ Use `analyze_text("مكتوب، ...")` to retrieve each normalized token, its ch
 ## v0.9.25 Unicode offset regressions
 
 Expanded sentence offset tests for lam–alef compatibility ligatures and tatweel with Arabic vowel marks. Normalization helper imports now occur at module level rather than per text cluster. Original offsets remain optional and refer to the unnormalized input. Full suite verification still outstanding.
+
+## v0.9.26 Unicode source-alignment coverage
+
+Added regression cases for decomposed hamza and the compatibility form ﷺ, whose NFKC expansion contains multiple tokens. Each expanded token points back to the shared original glyph span. The offset algorithm is unchanged. Isolated Unicode normalization checks passed, but current repository test execution remains unverified.

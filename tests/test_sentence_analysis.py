@@ -53,6 +53,22 @@ class SentenceAnalysisTests(unittest.TestCase):
         self.assertEqual(rows[0]["token"], "كتاب")
         self.assertEqual(text[rows[0]["original_start"]:rows[0]["original_end"]], "كـِتاب")
 
+    def test_decomposed_hamza_source_span(self):
+        source = "  أمل!"
+        records = analyze_text(source, include_original_offsets=True)
+        self.assertEqual(records[0]["token"], "أمل")
+        self.assertEqual(source[records[0]["original_start"]:records[0]["original_end"]], "أمل")
+
+    def test_multiword_compatibility_expansion_preserves_source_span(self):
+        source = "ﷺ"
+        records = analyze_text(source, include_original_offsets=True)
+        self.assertEqual([record["token"] for record in records],
+                         ["صلى", "الله", "عليه", "وسلم"])
+        self.assertTrue(all(
+            source[record["original_start"]:record["original_end"]] == source
+            for record in records
+        ))
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):
