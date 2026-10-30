@@ -35,6 +35,11 @@ class ReleaseGateTests(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertIn("[unit_tests] FAIL", out)
 
+    def test_last_summary_controls_discovery(self):
+        status, out = self.check("Ran 3 tests in 0.001s\\nOK\\nRan 0 tests in 0.001s\\nOK")
+        self.assertEqual(status, 1)
+        self.assertIn("[unit_tests] FAIL", out)
+
     def test_nonzero_exit_fails(self):
         status, out = self.check("Ran 3 tests in 0.001s\nFAILED", 1)
         self.assertEqual(status, 1)

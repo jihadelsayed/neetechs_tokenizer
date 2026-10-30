@@ -24,8 +24,8 @@ def main():
             exit_code, output = 1, f"{type(exc).__name__}: {exc}"
         passed = exit_code == 0
         if name == "unit_tests":
-            match = re.search(r"Ran ([0-9]+) tests?", output)
-            passed = passed and match is not None and int(match.group(1)) > 0
+            counts = re.findall(r"Ran ([0-9]+) tests?", output)
+            passed = passed and bool(counts) and int(counts[-1]) > 0
         results[name] = {"passed": passed,
                          "exit_code": exit_code, "output": output[-12000:]}
         print(f"[{name}] {'PASS' if passed else 'FAIL'}", flush=True)
