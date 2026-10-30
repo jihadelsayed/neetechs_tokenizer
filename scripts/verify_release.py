@@ -24,7 +24,7 @@ def main():
             exit_code, output = 1, f"{type(exc).__name__}: {exc}"
         passed = exit_code == 0
         if name == "unit_tests":
-            counts = re.findall(r"Ran ([0-9]+) tests?", output)
+            counts = re.findall(r"(?m)^Ran ([0-9]+) tests? in [^\n]+$", output)
             passed = passed and bool(counts) and int(counts[-1]) > 0
         results[name] = {"passed": passed,
                          "exit_code": exit_code, "output": output[-12000:]}

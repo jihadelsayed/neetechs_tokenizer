@@ -36,7 +36,12 @@ class ReleaseGateTests(unittest.TestCase):
         self.assertIn("[unit_tests] FAIL", out)
 
     def test_last_summary_controls_discovery(self):
-        status, out = self.check("Ran 3 tests in 0.001s\\nOK\\nRan 0 tests in 0.001s\\nOK")
+        status, out = self.check("Ran 3 tests in 0.001s\nOK\nRan 0 tests in 0.001s\nOK")
+        self.assertEqual(status, 1)
+        self.assertIn("[unit_tests] FAIL", out)
+
+    def test_embedded_fake_summary_fails(self):
+        status, out = self.check("ERROR says Ran 3 tests in 0.001s\\nOK")
         self.assertEqual(status, 1)
         self.assertIn("[unit_tests] FAIL", out)
 

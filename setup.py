@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="neetechs_tokenizer",
-    version="0.9.19",
+    version="0.9.20",
     description="Conservative Arabic tokenizer and starter morphological analyzer",
     author="Jihad ElSayed",
     license="MIT",
