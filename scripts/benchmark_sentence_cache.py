@@ -39,9 +39,18 @@ def benchmark(repeats: int = 100, iterations: int = 10, *, workload: str = "repe
         # Synthetic Arabic-letter tokens; avoids introducing digit boundaries.
         alphabet = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي"
         base = len(alphabet)
-        words = ["كلمة" + alphabet[(index // base) % base]
-                 + alphabet[index % base] + alphabet[(index // (base * base)) % base]
-                 for index in range(4 * repeats)]
+
+        def suffix(index: int) -> str:
+            # Bijective base-N representation: no collisions as the corpus grows.
+            digits = []
+            while True:
+                index, remainder = divmod(index, base)
+                digits.append(alphabet[remainder])
+                if index == 0:
+                    return "".join(reversed(digits))
+                index -= 1
+
+        words = ["كلمة" + suffix(index) for index in range(4 * repeats)]
     sentence = " ".join(words)
     # Verify equivalent results before collecting timings.
     if analyze_text(sentence) != uncached_analysis(sentence):
