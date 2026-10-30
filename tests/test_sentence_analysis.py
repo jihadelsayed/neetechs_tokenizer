@@ -69,6 +69,20 @@ class SentenceAnalysisTests(unittest.TestCase):
             for record in records
         ))
 
+    def test_arabic_indic_and_persian_numbers_remain_whole(self):
+        from neetechs_tokenizer import tokenize
+        text = "الرقم ١٢٣ و ۱۲۳!"
+        expected = ["الرقم", "١٢٣", "و", "۱۲۳", "!"]
+        self.assertEqual(tokenize(text, split_clitics=False), expected)
+        self.assertEqual([r["token"] for r in analyze_text(text)], expected)
+
+    def test_arabic_decimal_and_group_separators(self):
+        from neetechs_tokenizer import tokenize
+        text = "١٢٫٥ ١٬٢٠٠ 123.45"
+        expected = ["١٢٫٥", "١٬٢٠٠", "123.45"]
+        self.assertEqual(tokenize(text, split_clitics=False), expected)
+        self.assertEqual([r["token"] for r in analyze_text(text)], expected)
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):
