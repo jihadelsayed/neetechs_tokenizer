@@ -83,6 +83,19 @@ class SentenceAnalysisTests(unittest.TestCase):
         self.assertEqual(tokenize(text, split_clitics=False), expected)
         self.assertEqual([r["token"] for r in analyze_text(text)], expected)
 
+    def test_unicode_latin_words_are_not_split(self):
+        from neetechs_tokenizer import tokenize
+        sentence = "café naïve don’t résumé!"
+        expected = ["café", "naïve", "don’t", "résumé", "!"]
+        self.assertEqual(tokenize(sentence, split_clitics=False), expected)
+        self.assertEqual([part["token"] for part in analyze_text(sentence)], expected)
+
+    def test_unicode_latin_and_arabic_digits(self):
+        from neetechs_tokenizer import tokenize
+        sentence = "café ١٢٫٥ العربية"
+        self.assertEqual(tokenize(sentence, split_clitics=False),
+                         ["café", "١٢٫٥", "العربية"])
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):
