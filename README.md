@@ -74,3 +74,10 @@ The bundled `data/regression.json` corpus contains 20 small, manually selected p
 ## v0.8: first weak-root forms
 
 `analyze_weak_verb()` recognizes a small set of **attested** hollow and defective verbs, for example قال/يقول/قل (قول), باع/يبيع/بع (بيع), and دعا/يدعو/ادع (دعو). The mappings are lexeme-specific, not productive rules. Unknown weak verbs remain unsupported and must not be assigned guessed roots. Full diacritics, weak-root inflection, and context-based disambiguation remain future work.
+
+## v0.9: expanded reviewed weak-verb paradigms
+
+The weak-form table now includes additional plural, dual, singular, and imperfect
+surfaces for قول, بيع, and دعو. Ambiguous undiacritized forms such as تقول
+retain multiple readings. All mappings remain explicit and lexical; this is not
+a generic inflection generator. Test with `python -m unittest discover -s tests -v`.
