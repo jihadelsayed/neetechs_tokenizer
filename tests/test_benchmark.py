@@ -95,6 +95,16 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(outputs[0]["top_one_correct"], outputs[1]["top_one_correct"])
         self.assertEqual(outputs[0]["ambiguous_top_root_cases"], 1)
 
+    def test_tie_aware_metric_needs_all_tied_roots_accepted(self):
+        analyses = [{"root": "كتب", "score": 0.9},
+                    {"root": "كبت", "score": 0.9}]
+        with patch("neetechs_tokenizer.benchmark.word_analyzer",
+                   return_value={"analyses": analyses}):
+            partial = benchmark_cases([{"word": "example", "root": "كتب"}])
+            both = benchmark_cases([{"word": "example", "roots": ["كتب", "كبت"]}])
+        self.assertEqual(partial["tie_aware_top_accuracy"], 0.0)
+        self.assertEqual(both["tie_aware_top_accuracy"], 1.0)
+
     def test_empty(self):
         self.assertIsNone(benchmark_cases([])["coverage"])
 

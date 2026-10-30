@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.14 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.15 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -160,3 +160,7 @@ The benchmark finds top-scoring root ties using the maximum score across all ret
 ## v0.9.14 benchmark order independence
 
 Top-1 root selection now uses the maximum observed score, with deterministic lexical tie-breaking. The separate root-tie count remains essential: alphabetical tie selection is not linguistic confidence. Added tests for unsorted predictions and reordering. Full-suite verification and independent corpus evaluation are still pending.
+
+## v0.9.15 tie-aware evaluation
+
+The benchmark adds `tie_aware_top_accuracy`: a tied top prediction earns credit only when all its equal-score roots are in the set of accepted roots. `top_one_root_accuracy` is retained for backward compatibility, but its alphabetical tie-break is not linguistic evidence. The test suite and independent benchmark still require full execution.

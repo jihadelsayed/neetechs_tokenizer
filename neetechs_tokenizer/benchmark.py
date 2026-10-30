@@ -35,6 +35,7 @@ def benchmark_cases(cases):
     ambiguous_top = 0
     unique_top_correct = 0
     uniquely_ranked = 0
+    tie_aware_correct = 0
     errors = []
     for index, case in enumerate(cases):
         if not isinstance(case, dict) or not isinstance(case.get("word"), str) or not case["word"].strip():
@@ -50,6 +51,10 @@ def benchmark_cases(cases):
         top_root = min(top_roots) if top_roots else None
         if top_root in expected:
             top_one_correct += 1
+        # A top-score tie is correct only if every tied root is accepted.
+        # This avoids giving arbitrary alphabetic tie-breaking credit.
+        if top_roots and top_roots <= expected:
+            tie_aware_correct += 1
         # A shared maximal score is not a confident top-1 prediction.
         # Count distinct roots only; grammatical readings of one root
         # should not be misclassified as lexical ambiguity.
@@ -71,6 +76,8 @@ def benchmark_cases(cases):
             "coverage": supported / n if n else None,
             "top_one_root_accuracy": top_one_correct / n if n else None,
             "top_one_correct": top_one_correct,
+            "tie_aware_top_accuracy": tie_aware_correct / n if n else None,
+            "tie_aware_correct": tie_aware_correct,
             "ambiguous_top_root_cases": ambiguous_top,
             "unambiguous_top_root_accuracy": unique_top_correct / uniquely_ranked if uniquely_ranked else None,
             "uniquely_ranked_cases": uniquely_ranked,
