@@ -17,6 +17,10 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(r["top_one_errors"], 0)
         self.assertEqual(r["top_one_root_accuracy"], 1.0)
 
+    def test_single_root_not_mistaken_for_ambiguity(self):
+        r = benchmark_cases([{"word": "كتبت", "root": "كتب"}])
+        self.assertEqual(r["ambiguous_top_root_cases"], 0)
+
     def test_empty(self):
         self.assertIsNone(benchmark_cases([])["coverage"])
 
