@@ -62,6 +62,18 @@ class BenchmarkTests(unittest.TestCase):
             with self.subTest(case=case), self.assertRaises(ValueError):
                 benchmark_cases([case])
 
+    def test_ties_use_max_score_not_first_position(self):
+        analyses = [
+            {"root": "كتب", "score": 0.4},
+            {"root": "علم", "score": 0.9},
+            {"root": "فتح", "score": 0.9},
+        ]
+        with patch("neetechs_tokenizer.benchmark.word_analyzer",
+                   return_value={"analyses": analyses}):
+            result = benchmark_cases([{"word": "example", "root": "علم"}])
+        self.assertEqual(result["ambiguous_top_root_cases"], 1)
+        self.assertEqual(result["uniquely_ranked_cases"], 0)
+
     def test_empty(self):
         self.assertIsNone(benchmark_cases([])["coverage"])
 

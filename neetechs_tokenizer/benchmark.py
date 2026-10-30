@@ -49,13 +49,13 @@ def benchmark_cases(cases):
         # Count distinct roots only; grammatical readings of one root
         # should not be misclassified as lexical ambiguity.
         if predicted:
-            best_score = predicted[0]["score"]
+            best_score = max(a["score"] for a in predicted)
             top_roots = {a["root"] for a in predicted if a["score"] == best_score}
             if len(top_roots) > 1:
                 ambiguous_top += 1
             else:
                 uniquely_ranked += 1
-                if top_root in expected:
+                if next(iter(top_roots)) in expected:
                     unique_top_correct += 1
         if roots:
             supported += 1

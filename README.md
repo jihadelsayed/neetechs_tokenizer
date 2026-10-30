@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.12 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.13 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -152,3 +152,7 @@ Evaluation inputs support either a legacy `root` string or a nonempty `roots` ar
 ## v0.9.12 benchmark fix
 
 Fixed the unambiguous top-root accuracy calculation for cases using a `roots` array. It now checks the accepted root set, consistent with candidate recall and top-one scoring. Expanded the regression assertion to cover this field.
+
+## v0.9.13 benchmark tie detection
+
+The benchmark finds top-scoring root ties using the maximum score across all returned analyses, rather than assuming the first analysis has the highest score. This makes the ambiguity count robust to analysis ordering. Added a synthetic order-independence regression test. The full suite still requires runtime verification.
