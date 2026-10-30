@@ -24,7 +24,7 @@ def main():
             passed = passed and match is not None and int(match.group(1)) > 0
         results[name] = {"passed": passed,
                          "exit_code": proc.returncode, "output": proc.stdout[-12000:]}
-        print(f"[{name}] {'PASS' if proc.returncode == 0 else 'FAIL'}", flush=True)
+        print(f"[{name}] {'PASS' if passed else 'FAIL'}", flush=True)
     report = {"ready_for_release_checks": all(x["passed"] for x in results.values()),
               "checks": results,
               "note": "Curated checks do not establish independent Arabic linguistic accuracy."}

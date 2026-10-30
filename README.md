@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.16 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.17 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -168,3 +168,7 @@ The benchmark adds `tie_aware_top_accuracy`: a tied top prediction earns credit 
 ## v0.9.16 release gate
 
 A successful unittest exit code must also contain a test summary reporting at least one executed test. Zero-test or missing-summary runs fail the release gate. Full package verification is still pending.
+
+## v0.9.17 verified release-gate reporting
+
+Release check output now reflects the actual computed passed status, including no-test failures. Added four targeted tests, exercised locally against an isolated copy of the checker (4/4 pass). Full repository unit tests and linguistic benchmark remain unverified.
