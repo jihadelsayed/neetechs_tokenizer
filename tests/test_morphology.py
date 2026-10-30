@@ -65,6 +65,15 @@ class ArabicTokenizerTests(unittest.TestCase):
         self.assertGreaterEqual(sum(len(v) for v in lexicon.values()), 35)
         self.assertEqual(len(lexicon["درس"]), 2)
 
+    def test_bundled_template_roundtrip(self):
+        from neetechs_tokenizer.lexicon import generate_form
+        lexicon = load_lexicon()
+        self.assertGreaterEqual(sum(map(len, lexicon.values())), 41)
+        for surface, analyses in lexicon.items():
+            for root, pattern, pos in analyses:
+                with self.subTest(surface=surface, root=root):
+                    self.assertEqual(generate_form(root, pattern), surface)
+
     def test_more_patterns(self):
         for surface, root, pattern in [
             ("مفتاح", "فتح", "مفعال"), ("مسموع", "سمع", "مفعول"),
