@@ -21,9 +21,14 @@ def tokenize(text: str, *, split_clitics: bool = True) -> list[str]:
         analyses = word_analyzer(token)["analyses"]
         if analyses:
             best = analyses[0]
-            segmented.extend(best["prefixes"])
-            segmented.append(best["stem"])
-            segmented.extend(s["surface"] for s in best["suffixes"])
+            pieces = (list(best["prefixes"]) + [best["stem"]]
+                      + [s["surface"] for s in best["suffixes"]])
+            # Never emit pieces if an analysis loses/changes surface letters.
+            # Future orthographic transforms need an explicit alignment layer.
+            if all(pieces) and "".join(pieces) == token:
+                segmented.extend(pieces)
+            else:
+                segmented.append(token)
         else:
             segmented.append(token)
     return segmented
