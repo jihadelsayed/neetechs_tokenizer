@@ -28,29 +28,35 @@ def uncached_analysis(text: str) -> list[dict]:
     ]
 
 
+def build_workload_words(repeats: int, workload: str) -> list[str]:
+    """Generate reproducible benchmark tokens without running morphology."""
+    if repeats < 1:
+        raise ValueError("repeats must be positive")
+    if workload not in {"repeated", "distinct"}:
+        raise ValueError("workload must be repeated or distinct")
+    if workload == "repeated":
+        return ["مكتوب", "الكاتب", "مكتوب", "الكاتب"] * repeats
+    alphabet = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي"
+    base = len(alphabet)
+
+    def suffix(index: int) -> str:
+        digits = []
+        while True:
+            index, remainder = divmod(index, base)
+            digits.append(alphabet[remainder])
+            if index == 0:
+                return "".join(reversed(digits))
+            index -= 1
+
+    return ["كلمة" + suffix(index) for index in range(4 * repeats)]
+
+
 def benchmark(repeats: int = 100, iterations: int = 10, *, workload: str = "repeated") -> dict:
     if repeats < 1 or iterations < 1:
         raise ValueError("repeats and iterations must be positive")
     if workload not in {"repeated", "distinct"}:
         raise ValueError("workload must be repeated or distinct")
-    if workload == "repeated":
-        words = ["مكتوب", "الكاتب", "مكتوب", "الكاتب"] * repeats
-    else:
-        # Synthetic Arabic-letter tokens; avoids introducing digit boundaries.
-        alphabet = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي"
-        base = len(alphabet)
-
-        def suffix(index: int) -> str:
-            # Bijective base-N representation: no collisions as the corpus grows.
-            digits = []
-            while True:
-                index, remainder = divmod(index, base)
-                digits.append(alphabet[remainder])
-                if index == 0:
-                    return "".join(reversed(digits))
-                index -= 1
-
-        words = ["كلمة" + suffix(index) for index in range(4 * repeats)]
+    words = build_workload_words(repeats, workload)
     sentence = " ".join(words)
     # Verify equivalent results before collecting timings.
     if analyze_text(sentence) != uncached_analysis(sentence):

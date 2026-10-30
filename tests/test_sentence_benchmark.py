@@ -60,18 +60,8 @@ class SentenceBenchmarkTests(unittest.TestCase):
         self.assertEqual(result["workload"], "distinct")
 
     def test_distinct_words_do_not_collide_at_large_sizes(self):
-        from unittest.mock import patch
-        from importlib import import_module
-        module = import_module("scripts.benchmark_sentence_cache")
-        captured = []
-        def observe(text):
-            captured.append(text)
-            return []
-        with patch.object(module, "analyze_text", return_value=[]):
-            with patch.object(module, "uncached_analysis", side_effect=observe):
-                with self.assertRaises(RuntimeError):
-                    benchmark(repeats=6000, iterations=1, workload="distinct")
-        tokens = captured[0].split()
+        from scripts.benchmark_sentence_cache import build_workload_words
+        tokens = build_workload_words(6000, "distinct")
         self.assertEqual(len(tokens), 24000)
         self.assertEqual(len(set(tokens)), 24000)
 
