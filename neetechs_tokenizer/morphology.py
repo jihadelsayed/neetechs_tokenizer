@@ -28,6 +28,12 @@ def word_analyzer(word: str) -> dict:
         for root, pattern, pos in lexicon.get(candidate.stem, ()):
             if pos not in candidate.allowed_pos:
                 continue
+            # Standard Arabic does not combine noun definite article
+            # with an attached possessive pronoun.
+            if (pos == "noun" and "ال" in candidate.prefixes
+                    and any(label.startswith("possessive-or-object:")
+                            for label in candidate.labels)):
+                continue
             if generate_form(root, pattern) != candidate.stem:
                 continue
             # Literal subject وا is applicable to reviewed perfect verbs;

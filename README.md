@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.3 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.2 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -100,3 +100,7 @@ A nonzero exit status means an expected lexical, tense or tokenization case fail
 `pass_rate` summarizes only the **30 curated in-sample examples**, not
 real-world root extraction accuracy, recall, or precision. Before 1.0, execute
 the full suite, add independently annotated corpus tests, and examine ambiguity.
+
+## v0.9.2 article–possessive compatibility fix
+
+For recognized nouns, the analyzer rejects combining the definite article (ال) with an attached possessive pronoun. Unrecognized words stay intact in tokenization. Runtime verification is still required before declaring a stable release.

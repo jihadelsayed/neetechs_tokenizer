@@ -26,6 +26,18 @@ class CandidateTests(unittest.TestCase):
         self.assertFalse(any(a["part_of_speech"] == "verb"
                              for a in wordAnalyzer("الكتب")["analyses"]))
 
+    def test_article_and_possessive_incompatible(self):
+        for word in ("الكاتبهم", "والكاتبها", "بالكتابهم"):
+            with self.subTest(word=word):
+                self.assertEqual(wordAnalyzer(word)["analyses"], [])
+                self.assertEqual(tokenize(word), [word])
+
+    def test_possessive_without_article_still_supported(self):
+        self.assertTrue(any(
+            a["part_of_speech"] == "noun"
+            for a in wordAnalyzer("كتابهم")["analyses"]
+        ))
+
     def test_future_false_positive_rejected(self):
         self.assertEqual(wordAnalyzer("سكتب")["analyses"], [])
 
