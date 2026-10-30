@@ -81,3 +81,22 @@ The weak-form table now includes additional plural, dual, singular, and imperfec
 surfaces for قول, بيع, and دعو. Ambiguous undiacritized forms such as تقول
 retain multiple readings. All mappings remain explicit and lexical; this is not
 a generic inflection generator. Test with `python -m unittest discover -s tests -v`.
+
+## v0.9.1 quality gate (not a stable v1.0 release)
+
+Run the full library tests:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Run the separate, machine-readable regression check:
+
+```bash
+python -m neetechs_tokenizer.evaluate
+```
+
+A nonzero exit status means an expected lexical, tense or tokenization case failed.
+`pass_rate` summarizes only the **30 curated in-sample examples**, not
+real-world root extraction accuracy, recall, or precision. Before 1.0, execute
+the full suite, add independently annotated corpus tests, and examine ambiguity.

@@ -131,6 +131,60 @@
       "tokens": [
         "سكتب"
       ]
+    },
+    {
+      "word": "قالوا",
+      "root": "قول",
+      "tense": "perfect"
+    },
+    {
+      "word": "يقولون",
+      "root": "قول",
+      "tense": "imperfect"
+    },
+    {
+      "word": "تقول",
+      "root": "قول",
+      "tense": "imperfect"
+    },
+    {
+      "word": "باعوا",
+      "root": "بيع",
+      "tense": "perfect"
+    },
+    {
+      "word": "نبيع",
+      "root": "بيع",
+      "tense": "imperfect"
+    },
+    {
+      "word": "دعونا",
+      "root": "دعو",
+      "tense": "perfect"
+    },
+    {
+      "word": "تدعو",
+      "root": "دعو",
+      "tense": "imperfect"
+    },
+    {
+      "word": "يدعون",
+      "root": "دعو",
+      "tense": "imperfect"
+    },
+    {
+      "word": "مقال",
+      "unknown": true,
+      "tokens": [
+        "مقال"
+      ]
+    },
+    {
+      "word": "يقولك",
+      "unknown": true,
+      "tokens": [
+        "يقولك"
+      ]
     }
   ]
 }
