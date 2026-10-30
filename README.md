@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.2 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.3 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -34,7 +34,7 @@ The JSON-compatible word_analyzer(word) result contains word, normalized, and an
 
 ## Current limitations
 
-- Only a **starter set** of sound triliteral stems (e.g. كتب, علم, درس) and a few clitic constructions are supported.
+- Only a **bundled and validated starter set** of sound triliteral stems (e.g. كتب, علم, درس) and a few clitic constructions are supported.
 - No general root discovery, weak-root handling, quadriliteral roots, comprehensive POS tagging, or sentence syntax yet.
 - Conjugation is only partially represented (e.g. وا and وهم); additional affix rules must be reviewed and tested.
 - The existing restore_diacritics, correct_grammar, and translate utilities are illustrative dictionary lookups, not language models.
@@ -51,6 +51,6 @@ The JSON-compatible word_analyzer(word) result contains word, normalized, and an
 
 ## Next steps
 
-Add a reviewed morphology lexicon (external data file), affix compatibility rules, orthographic transformations, ambiguity evaluation, and corpus-backed regression tests before attempting ML-based token compression or language modeling. Keep tokenizer segmentation separate from root analysis and later semantic analysis.
+Expand the versioned lexicon, strengthen affix compatibility rules, add orthographic transformations, ambiguity evaluation, and corpus-backed regression tests before attempting ML-based token compression or language modeling. Keep tokenizer segmentation separate from root analysis and later semantic analysis.
 
 Repository: https://github.com/jihadelsayed/neetechs_tokenizer · MIT License

@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "description": "Curated illustrative sound-triliteral surface forms. Not a comprehensive Arabic lexicon.",
+  "entries": [
+    {
+      "surface": "كتب",
+      "root": "كتب",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "كاتب",
+      "root": "كتب",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مكتوب",
+      "root": "كتب",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "كتاب",
+      "root": "كتب",
+      "pattern": "فعال",
+      "pos": "noun"
+    },
+    {
+      "surface": "كتابة",
+      "root": "كتب",
+      "pattern": "فعالة",
+      "pos": "noun"
+    },
+    {
+      "surface": "استكتب",
+      "root": "كتب",
+      "pattern": "استفعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "علم",
+      "root": "علم",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "عالم",
+      "root": "علم",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "معلوم",
+      "root": "علم",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "تعليم",
+      "root": "علم",
+      "pattern": "تفعيل",
+      "pos": "noun"
+    },
+    {
+      "surface": "معلم",
+      "root": "علم",
+      "pattern": "مفعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "درس",
+      "root": "درس",
+      "pattern": "فعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "درس",
+      "root": "درس",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "دارس",
+      "root": "درس",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مدروس",
+      "root": "درس",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "طالب",
+      "root": "طلب",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "عمل",
+      "root": "عمل",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "عامل",
+      "root": "عمل",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "معمول",
+      "root": "عمل",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "استعمل",
+      "root": "عمل",
+      "pattern": "استفعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "فتح",
+      "root": "فتح",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "فاتح",
+      "root": "فتح",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مفتوح",
+      "root": "فتح",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "مفتاح",
+      "root": "فتح",
+      "pattern": "مفعال",
+      "pos": "noun"
+    },
+    {
+      "surface": "حفظ",
+      "root": "حفظ",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "حافظ",
+      "root": "حفظ",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "محفوظ",
+      "root": "حفظ",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "سمع",
+      "root": "سمع",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "سامع",
+      "root": "سمع",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مسموع",
+      "root": "سمع",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "شرب",
+      "root": "شرب",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "شارب",
+      "root": "شرب",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مشروب",
+      "root": "شرب",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "لعب",
+      "root": "لعب",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "لاعب",
+      "root": "لعب",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "ملعوب",
+      "root": "لعب",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "فهم",
+      "root": "فهم",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "فاهم",
+      "root": "فهم",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مفهوم",
+      "root": "فهم",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "طلب",
+      "root": "طلب",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "مطلوب",
+      "root": "طلب",
+      "pattern": "مفعول",
+      "pos": "noun"
+    }
+  ]
+}

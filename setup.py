@@ -2,11 +2,13 @@ from setuptools import find_packages, setup
 
 setup(
     name="neetechs_tokenizer",
-    version="0.2.0",
+    version="0.3.0",
     description="Conservative Arabic tokenizer and starter morphological analyzer",
     author="Jihad ElSayed",
     license="MIT",
     packages=find_packages(),
+    package_data={"neetechs_tokenizer": ["data/*.json"]},
+    include_package_data=True,
     install_requires=[],
     extras_require={"solver": ["numpy>=1.24"]},
     python_requires=">=3.10",

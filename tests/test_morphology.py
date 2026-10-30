@@ -4,6 +4,7 @@ from neetechs_tokenizer import get_root, tokenize, wordAnalyzer, word_analyzer
 from neetechs_tokenizer.clitic_handler import split_clitics
 from neetechs_tokenizer.pattern_matcher import match_pattern
 from neetechs_tokenizer.utils import clean_text, is_arabic_word
+from neetechs_tokenizer.lexicon import load_lexicon, validate_lexicon
 
 
 class ArabicTokenizerTests(unittest.TestCase):
@@ -58,6 +59,36 @@ class ArabicTokenizerTests(unittest.TestCase):
         self.assertIsNone(get_root("المدرسة"))
         self.assertEqual(get_root("مكتوب"), "كتب")
 
+
+    def test_bundled_lexicon_loaded(self):
+        lexicon = load_lexicon()
+        self.assertGreaterEqual(sum(len(v) for v in lexicon.values()), 35)
+        self.assertEqual(len(lexicon["درس"]), 2)
+
+    def test_more_patterns(self):
+        for surface, root, pattern in [
+            ("مفتاح", "فتح", "مفعال"), ("مسموع", "سمع", "مفعول"),
+            ("استعمل", "عمل", "استفعل"), ("حافظ", "حفظ", "فاعل")
+        ]:
+            with self.subTest(surface=surface):
+                analysis = word_analyzer(surface)["analyses"][0]
+                self.assertEqual((analysis["root"], analysis["pattern"]), (root, pattern))
+
+    def test_more_clitics(self):
+        self.assertEqual(tokenize("والمفتاح فالمحفوظ"), ["و", "ال", "مفتاح", "ف", "ال", "محفوظ"])
+
+    def test_invalid_schema_rejected(self):
+        with self.assertRaises(ValueError):
+            validate_lexicon({"schema_version": 2, "entries": []})
+
+    def test_bad_pattern_rejected(self):
+        with self.assertRaises(ValueError):
+            validate_lexicon({"schema_version": 1, "entries": [
+                {"surface": "كاتب", "root": "كتب", "pattern": "مفعول", "pos": "noun"}
+            ]})
+
+    def test_no_fabricated_new_lexical_root(self):
+        self.assertEqual(word_analyzer("والمجهول")["analyses"], [])
 
 if __name__ == "__main__":
     unittest.main()

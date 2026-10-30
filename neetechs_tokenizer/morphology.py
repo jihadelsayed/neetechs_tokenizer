@@ -7,59 +7,8 @@ from __future__ import annotations
 
 from .utils import clean_text
 
-# A curated starter lexicon. Keys are *unvowelled surface stems*. Templates use
-# ف/ع/ل for the three radicals. Extend data only with reviewed analyses.
-STEMS = {
-    "كتب": ("كتب", "فعل", "verb"),
-    "كاتب": ("كتب", "فاعل", "noun"),
-    "مكتوب": ("كتب", "مفعول", "noun"),
-    "كتاب": ("كتب", "فعال", "noun"),
-    "كتابة": ("كتب", "فعالة", "noun"),
-    "استكتب": ("كتب", "استفعل", "verb"),
-    "علم": ("علم", "فعل", "verb"),
-    "عالم": ("علم", "فاعل", "noun"),
-    "معلوم": ("علم", "مفعول", "noun"),
-    "تعليم": ("علم", "تفعيل", "noun"),
-    "درس": (("درس", "فعل", "noun"), ("درس", "فعل", "verb")),
-    "دارس": ("درس", "فاعل", "noun"),
-    "مدروس": ("درس", "مفعول", "noun"),
-    "طالب": ("طلب", "فاعل", "noun"),
-    "معلم": ("علم", "مفعل", "noun"),  # Simplified unvowelled template
-}
-
-# (written surface, segmented pieces, compatible parts of speech)
-PREFIXES = (
-    ("", (), ("noun", "verb")),
-    ("و", ("و",), ("noun", "verb")),
-    ("ف", ("ف",), ("noun", "verb")),
-    ("ال", ("ال",), ("noun",)),
-    ("وال", ("و", "ال"), ("noun",)),
-    ("فال", ("ف", "ال"), ("noun",)),
-    ("ب", ("ب",), ("noun",)),
-    ("ل", ("ل",), ("noun",)),
-    ("ك", ("ك",), ("noun",)),
-    ("بال", ("ب", "ال"), ("noun",)),
-    ("كال", ("ك", "ال"), ("noun",)),
-    ("س", ("س",), ("verb",)),
-    ("وس", ("و", "س"), ("verb",)),
-)
-
-# (written suffix, segments, compatible parts of speech, labels)
-SUFFIXES = (
-    ("", (), ("noun", "verb"), ()),
-    ("وا", ("وا",), ("verb",), ("subject:3mp",)),
-    # Before an attached object pronoun, plural alif is normally absent.
-    ("وهم", ("و", "هم"), ("verb",), ("subject:3mp", "object:3mp")),
-    ("هم", ("هم",), ("noun", "verb"), ("possessive-or-object:3mp",)),
-    ("ها", ("ها",), ("noun", "verb"), ("possessive-or-object:3fs",)),
-)
-
-
-def generate_form(root: str, pattern: str) -> str:
-    """Render a sound triliteral root into an unvowelled template."""
-    if len(root) != 3:
-        raise ValueError("Only triliteral roots are supported")
-    return "".join(dict(zip("فعل", root)).get(c, c) for c in pattern)
+from .affixes import PREFIXES, SUFFIXES
+from .lexicon import generate_form, load_lexicon
 
 
 def word_analyzer(word: str) -> dict:
@@ -73,6 +22,7 @@ def word_analyzer(word: str) -> dict:
     if not normalized or any(ch.isspace() for ch in normalized):
         return {"word": word, "normalized": normalized, "analyses": []}
     analyses = []
+    stems = load_lexicon()
     for prefix, prefix_parts, prefix_pos in PREFIXES:
         if not normalized.startswith(prefix):
             continue
@@ -81,10 +31,10 @@ def word_analyzer(word: str) -> dict:
                 continue
             end = len(normalized) - len(suffix) if suffix else len(normalized)
             stem = normalized[len(prefix):end]
-            entry = STEMS.get(stem)
+            entry = stems.get(stem)
             if entry is None:
                 continue
-            entries = entry if isinstance(entry[0], tuple) else (entry,)
+            entries = entry
             for root, pattern, pos in entries:
                 if pos not in prefix_pos or pos not in suffix_pos:
                     continue
@@ -101,7 +51,7 @@ def word_analyzer(word: str) -> dict:
                         {"surface": part, "function": label}
                         for part, label in zip(suffix_parts, suffix_labels)
                     ],
-                    "source": "starter_lexicon",
+                    "source": "bundled_lexicon_v1",
                     "score": round(1.0 - 0.05 * (len(prefix_parts) + len(suffix_parts)), 2),
                 })
     analyses.sort(key=lambda a: (-a["score"], a["root"], a["stem"]))
