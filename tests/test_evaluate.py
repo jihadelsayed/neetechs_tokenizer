@@ -31,6 +31,16 @@ class QualityGateTests(unittest.TestCase):
         self.assertFalse(result["passed"])
         self.assertEqual(result["failures"][0]["reason"], "incorrect_segmentation")
 
+    def test_supported_and_unsupported_metrics(self):
+        result = evaluate_cases([
+            {"word": "مكتوب", "root": "كتب"},
+            {"word": "قاموا", "unknown": True},
+        ])
+        self.assertEqual(result["expected_unsupported"], 1)
+        self.assertEqual(result["rejected_unsupported"], 1)
+        self.assertEqual(result["supported_case_coverage"], 1.0)
+        self.assertIn("not true negatives", result["note"])
+
     def test_empty_dataset(self):
         result = evaluate_cases([])
         self.assertTrue(result["passed"])

@@ -46,18 +46,24 @@ def evaluate_cases(cases: list[dict]) -> dict:
             else:
                 failures.append({"index": index, "word": word, "reason": "incorrect_segmentation"})
     total = positive + negative
+    supported_coverage = round(correct_positive / positive, 4) if positive else None
+    unsupported_rejection = round(correct_negative / negative, 4) if negative else None
     return {
         "total": total,
         "positive": positive,
         "negative": negative,
         "correct_positive": correct_positive,
-        "correct_negative": correct_negative,
+        "correct_negative": correct_negative,  # legacy compatibility
+        "expected_unsupported": negative,
+        "rejected_unsupported": correct_negative,
+        "supported_case_coverage": supported_coverage,
+        "unsupported_case_rejection": unsupported_rejection,
         "token_checks": token_checks,
         "token_correct": token_correct,
         "passed": len(failures) == 0,
         "pass_rate": round((total - len({x["index"] for x in failures})) / total, 4) if total else None,
         "failures": failures,
-        "note": "In-sample regression checks only; not a real-world accuracy estimate.",
+        "note": "Expected-unsupported words may be valid Arabic; these are not true negatives or real-world accuracy estimates.",
     }
 
 

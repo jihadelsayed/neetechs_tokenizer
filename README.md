@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.3 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.4 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -112,3 +112,7 @@ For recognized nouns, the analyzer rejects combining the definite article (ال)
 ## Local release check (v0.9.x)
 
 Run `python scripts/verify_release.py` from anywhere inside your checkout. It runs the full unit tests and the bundled morphology regression command, then writes `release-check-results.json`. Exit status is nonzero if either check fails. A green result only verifies curated regression cases, not full linguistic accuracy. Do not commit the generated report.
+
+## v0.9.4 evaluation terminology
+
+The legacy `negative` and `correct_negative` fields mean **expected-unsupported cases**, not true negatives. Some forms such as `قاموا` are valid Arabic but outside the current lexicon. The report also provides `supported_case_coverage` and `unsupported_case_rejection`; these are in-sample checks, not real-world accuracy metrics. Three noun-article-possessive incompatibility examples were added.
