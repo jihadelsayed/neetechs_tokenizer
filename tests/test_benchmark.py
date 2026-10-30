@@ -41,6 +41,25 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(r["uniquely_ranked_cases"], 0)
         self.assertIsNone(r["unambiguous_top_root_accuracy"])
 
+    def test_multiple_accepted_roots(self):
+        from unittest.mock import patch
+        analyses = [{"root": "كتب", "score": 0.8}]
+        with patch("neetechs_tokenizer.benchmark.word_analyzer",
+                   return_value={"analyses": analyses}):
+            result = benchmark_cases([{"word": "مثال", "roots": ["كتب", "كبت"]}])
+        self.assertEqual(result["root_recall_at_any_candidate"], 1.0)
+        self.assertEqual(result["top_one_root_accuracy"], 1.0)
+
+    def test_invalid_multiple_annotations(self):
+        for case in (
+            {"word": "مثال", "roots": []},
+            {"word": "مثال", "roots": ["كتب", "كتب"]},
+            {"word": "مثال", "root": "كتب", "roots": ["كتب"]},
+            {"word": "مثال", "roots": ["كتب", 123]},
+        ):
+            with self.subTest(case=case), self.assertRaises(ValueError):
+                benchmark_cases([case])
+
     def test_empty(self):
         self.assertIsNone(benchmark_cases([])["coverage"])
 

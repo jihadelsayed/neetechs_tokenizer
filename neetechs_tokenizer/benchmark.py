@@ -10,6 +10,22 @@ from pathlib import Path
 from .morphology import word_analyzer
 
 
+def _reference_roots(case, index):
+    """Accept one legacy root or a nonempty collection of accepted roots."""
+    has_root = "root" in case
+    has_roots = "roots" in case
+    if has_root == has_roots:
+        raise ValueError(f"Case {index} requires exactly one of root or roots")
+    raw = [case["root"]] if has_root else case["roots"]
+    if not isinstance(raw, list) or not raw or any(
+        not isinstance(item, str) or not item.strip() for item in raw
+    ):
+        raise ValueError(f"Case {index} has invalid root annotations")
+    if len(raw) != len(set(raw)):
+        raise ValueError(f"Case {index} has duplicate accepted roots")
+    return set(raw)
+
+
 def benchmark_cases(cases):
     if not isinstance(cases, list):
         raise ValueError("Expected cases list")
@@ -21,12 +37,13 @@ def benchmark_cases(cases):
     uniquely_ranked = 0
     errors = []
     for index, case in enumerate(cases):
-        if not isinstance(case, dict) or not isinstance(case.get("word"), str) or not isinstance(case.get("root"), str):
-            raise ValueError(f"Case {index} requires string word and root")
+        if not isinstance(case, dict) or not isinstance(case.get("word"), str) or not case["word"].strip():
+            raise ValueError(f"Case {index} requires a nonempty word")
+        expected = _reference_roots(case, index)
         predicted = word_analyzer(case["word"])["analyses"]
         roots = {a["root"] for a in predicted}
         top_root = predicted[0]["root"] if predicted else None
-        if top_root == case["root"]:
+        if top_root in expected:
             top_one_correct += 1
         # A shared maximal score is not a confident top-1 prediction.
         # Count distinct roots only; grammatical readings of one root
@@ -42,10 +59,10 @@ def benchmark_cases(cases):
                     unique_top_correct += 1
         if roots:
             supported += 1
-        if case["root"] in roots:
+        if bool(expected & roots):
             correct += 1
         else:
-            errors.append({"index": index, "word": case["word"], "expected_root": case["root"], "predicted_roots": sorted(roots)})
+            errors.append({"index": index, "word": case["word"], "expected_roots": sorted(expected), "predicted_roots": sorted(roots)})
     n = len(cases)
     return {"total": n, "root_recall_at_any_candidate": correct / n if n else None,
             "coverage": supported / n if n else None,
