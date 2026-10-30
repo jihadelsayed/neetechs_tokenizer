@@ -37,6 +37,8 @@ def tokenize(text: str, *, split_clitics: bool = True) -> list[str]:
 
 def analyze_tokens(tokens: list[str]) -> list[dict]:
     """Retain the original lightweight output shape for existing callers."""
+    if not isinstance(tokens, list) or any(not isinstance(token, str) for token in tokens):
+        raise TypeError("tokens must be a list of strings")
     analyzed = []
     for token in tokens:
         result = word_analyzer(token)

@@ -110,6 +110,19 @@ class SentenceAnalysisTests(unittest.TestCase):
                 self.assertEqual(tokenize(text, split_clitics=False), expected)
                 self.assertEqual([r["token"] for r in analyze_text(text)], expected)
 
+    def test_analyze_tokens_rejects_malformed_inputs(self):
+        from neetechs_tokenizer import analyze_tokens
+        for invalid in ("مكتوب", None, ["مكتوب", None], [123], ("مكتوب",)):
+            with self.subTest(value=invalid):
+                with self.assertRaises(TypeError):
+                    analyze_tokens(invalid)
+
+    def test_analyze_tokens_accepts_valid_list(self):
+        from neetechs_tokenizer import analyze_tokens
+        result = analyze_tokens(["مكتوب", "unknown"])
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["root"], "كتب")
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):
