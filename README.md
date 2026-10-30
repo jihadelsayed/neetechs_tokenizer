@@ -66,3 +66,7 @@ Repository: https://github.com/jihadelsayed/neetechs_tokenizer · MIT License
 ## v0.6: candidate-first analysis
 
 The analyzer generates reversible prefix/stem/suffix combinations with `priority_identifier()` and only validates stems found in the reviewed lexicon. Prefix/suffix compatibility is checked before root/template matching. Bare `س` on dictionary perfect verbs was removed to avoid false future-tense analyses. Scores are deterministic prioritization heuristics, not probabilities. Candidate generation does not imply every returned candidate is linguistically correct; only validated analyses are returned by `wordAnalyzer()`.
+
+## v0.7: quality baseline
+
+The bundled `data/regression.json` corpus contains 20 small, manually selected positive and negative cases. `tests/test_regression.py` checks these expected roots, forms, surface segmentations, unknown-word behavior, preserved ambiguity, and duplicate analysis removal. This is **not** a statistical evaluation dataset; coverage is deliberately narrow. Run `python -m unittest discover -s tests -v` before releasing. The quality gate does not claim support for words outside these reviewed examples.

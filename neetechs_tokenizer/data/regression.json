@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "word": "مكتوب",
+      "root": "كتب",
+      "pattern": "مفعول"
+    },
+    {
+      "word": "استكتب",
+      "root": "كتب",
+      "pattern": "استفعل"
+    },
+    {
+      "word": "استكتبوهم",
+      "root": "كتب",
+      "pattern": "استفعل",
+      "tokens": [
+        "استكتب",
+        "و",
+        "هم"
+      ]
+    },
+    {
+      "word": "والكاتب",
+      "root": "كتب",
+      "tokens": [
+        "و",
+        "ال",
+        "كاتب"
+      ]
+    },
+    {
+      "word": "بالكتاب",
+      "root": "كتب",
+      "tokens": [
+        "ب",
+        "ال",
+        "كتاب"
+      ]
+    },
+    {
+      "word": "والمفتاح",
+      "root": "فتح",
+      "tokens": [
+        "و",
+        "ال",
+        "مفتاح"
+      ]
+    },
+    {
+      "word": "كتبوا",
+      "root": "كتب",
+      "tokens": [
+        "كتب",
+        "وا"
+      ]
+    },
+    {
+      "word": "كتبت",
+      "root": "كتب",
+      "tense": "perfect"
+    },
+    {
+      "word": "يكتب",
+      "root": "كتب",
+      "tense": "imperfect"
+    },
+    {
+      "word": "تكتبون",
+      "root": "كتب",
+      "tense": "imperfect"
+    },
+    {
+      "word": "اكتب",
+      "root": "كتب",
+      "tense": "imperative"
+    },
+    {
+      "word": "درس",
+      "root": "درس"
+    },
+    {
+      "word": "مسموع",
+      "root": "سمع",
+      "pattern": "مفعول"
+    },
+    {
+      "word": "استعمل",
+      "root": "عمل",
+      "pattern": "استفعل"
+    },
+    {
+      "word": "وليد",
+      "unknown": true,
+      "tokens": [
+        "وليد"
+      ]
+    },
+    {
+      "word": "والورد",
+      "unknown": true,
+      "tokens": [
+        "والورد"
+      ]
+    },
+    {
+      "word": "المدرسة",
+      "unknown": true,
+      "tokens": [
+        "المدرسة"
+      ]
+    },
+    {
+      "word": "والمجهول",
+      "unknown": true,
+      "tokens": [
+        "والمجهول"
+      ]
+    },
+    {
+      "word": "قاموا",
+      "unknown": true,
+      "tokens": [
+        "قاموا"
+      ]
+    },
+    {
+      "word": "سكتب",
+      "unknown": true,
+      "tokens": [
+        "سكتب"
+      ]
+    }
+  ]
+}

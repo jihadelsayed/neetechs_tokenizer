@@ -46,7 +46,20 @@ def word_analyzer(word: str) -> dict:
     analyses.extend(analyze_perfect(normalized))
     analyses.extend(analyze_imperfect(normalized))
     analyses.extend(analyze_imperative(normalized))
-    analyses.sort(key=_ranking)
+    # Collapse identical analyses caused by overlapping lexical/rule paths,
+    # but preserve genuinely different grammatical interpretations.
+    unique = {}
+    for analysis in analyses:
+        signature = (
+            analysis["root"], analysis["pattern"], analysis["stem"],
+            analysis["part_of_speech"], tuple(analysis["prefixes"]),
+            tuple((s["surface"], s["function"]) for s in analysis["suffixes"]),
+            analysis.get("tense"), analysis.get("person"),
+            analysis.get("number"), analysis.get("gender")
+        )
+        if signature not in unique or analysis["score"] > unique[signature]["score"]:
+            unique[signature] = analysis
+    analyses = sorted(unique.values(), key=_ranking)
     return {"word": word, "normalized": normalized, "analyses": analyses}
 
 
