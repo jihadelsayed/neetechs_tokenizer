@@ -39,6 +39,20 @@ class SentenceBenchmarkTests(unittest.TestCase):
         self.assertEqual(cached_mock.call_count, 2)
         self.assertEqual(uncached_mock.call_count, 400)
 
+    def test_cache_is_scoped_to_single_analysis_call(self):
+        from unittest.mock import patch
+        from importlib import import_module
+
+        tokenizer_module = import_module("neetechs_tokenizer.tokenizer")
+        with patch.object(tokenizer_module, "word_analyzer",
+                          wraps=tokenizer_module.word_analyzer) as mocked:
+            first = analyze_text("مكتوب مكتوب")
+            second = analyze_text("مكتوب مكتوب")
+
+        self.assertEqual(mocked.call_count, 2)
+        self.assertEqual(first, second)
+        self.assertIsNot(first[0]["analyses"], second[0]["analyses"])
+
     def test_reject_invalid_parameters(self):
         for repeats, iterations in ((0, 1), (1, 0), (-1, 2)):
             with self.subTest(repeats=repeats, iterations=iterations):
