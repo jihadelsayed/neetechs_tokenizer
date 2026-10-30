@@ -1,33 +1,59 @@
-"""Reproducible microbenchmark for repeated Arabic sentence analysis.
+"""Compare cached sentence analysis with a per-token uncached baseline.
 
 Run: python -m scripts.benchmark_sentence_cache
-Results are environment-dependent; no performance threshold is asserted.
+Timing is machine-dependent; no speedup is guaranteed.
 """
 import argparse
 import statistics
 import time
 
-from neetechs_tokenizer import analyze_text
+from neetechs_tokenizer import analyze_text, word_analyzer
+from neetechs_tokenizer.tokenizer import WORD_RE
+from neetechs_tokenizer.utils import clean_text, is_arabic_word
+
+
+def uncached_analysis(text: str) -> list[dict]:
+    """Independent baseline using the same token boundaries and analyzer."""
+    normalized = clean_text(text)
+    return [
+        {
+            "token": match.group(),
+            "start": match.start(),
+            "end": match.end(),
+            "analyses": (word_analyzer(match.group())["analyses"]
+                         if is_arabic_word(match.group()) else []),
+        }
+        for match in WORD_RE.finditer(normalized)
+    ]
 
 
 def benchmark(repeats: int = 100, iterations: int = 10) -> dict:
     if repeats < 1 or iterations < 1:
         raise ValueError("repeats and iterations must be positive")
     sentence = " ".join(["مكتوب", "الكاتب", "مكتوب", "الكاتب"] * repeats)
-    measurements = []
-    # Warm up the lexicon's one-time loading overhead.
-    analyze_text(sentence)
+    # Verify equivalent results before collecting timings.
+    if analyze_text(sentence) != uncached_analysis(sentence):
+        raise RuntimeError("cached and uncached results differ")
+    timings = {"cached": [], "uncached": []}
     for _ in range(iterations):
-        start = time.perf_counter()
-        result = analyze_text(sentence)
-        measurements.append(time.perf_counter() - start)
-        if len(result) != 4 * repeats:
-            raise RuntimeError("unexpected token count")
+        # Alternate order to reduce systematic timing bias.
+        modes = ("cached", "uncached") if _ % 2 == 0 else ("uncached", "cached")
+        for mode in modes:
+            start = time.perf_counter()
+            result = analyze_text(sentence) if mode == "cached" else uncached_analysis(sentence)
+            elapsed = time.perf_counter() - start
+            if len(result) != 4 * repeats:
+                raise RuntimeError("unexpected token count")
+            timings[mode].append(elapsed)
+    cached = statistics.median(timings["cached"])
+    uncached = statistics.median(timings["uncached"])
     return {
         "tokens_per_run": 4 * repeats,
         "iterations": iterations,
-        "median_seconds": statistics.median(measurements),
-        "min_seconds": min(measurements),
+        "median_seconds": cached,
+        "min_seconds": min(timings["cached"]),
+        "uncached_median_seconds": uncached,
+        "speedup_ratio": (uncached / cached if cached > 0 else None),
     }
 
 
