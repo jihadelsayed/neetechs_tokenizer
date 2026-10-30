@@ -15,6 +15,13 @@ class SentenceBenchmarkTests(unittest.TestCase):
         sentence = "مكتوب الكاتب! مكتوب"
         self.assertEqual(uncached_analysis(sentence), analyze_text(sentence))
 
+    def test_uncached_results_are_independent(self):
+        rows = uncached_analysis("مكتوب مكتوب")
+        self.assertTrue(rows[0]["analyses"])
+        root = rows[1]["analyses"][0]["root"]
+        rows[0]["analyses"][0]["root"] = "changed"
+        self.assertEqual(rows[1]["analyses"][0]["root"], root)
+
     def test_reject_invalid_parameters(self):
         for repeats, iterations in ((0, 1), (1, 0), (-1, 2)):
             with self.subTest(repeats=repeats, iterations=iterations):

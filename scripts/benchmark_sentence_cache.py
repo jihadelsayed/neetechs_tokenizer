@@ -4,6 +4,7 @@ Run: python -m scripts.benchmark_sentence_cache
 Timing is machine-dependent; no speedup is guaranteed.
 """
 import argparse
+from copy import deepcopy
 import statistics
 import time
 
@@ -20,7 +21,7 @@ def uncached_analysis(text: str) -> list[dict]:
             "token": match.group(),
             "start": match.start(),
             "end": match.end(),
-            "analyses": (word_analyzer(match.group())["analyses"]
+            "analyses": (deepcopy(word_analyzer(match.group())["analyses"])
                          if is_arabic_word(match.group()) else []),
         }
         for match in WORD_RE.finditer(normalized)
