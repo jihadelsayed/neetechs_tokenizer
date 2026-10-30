@@ -1,16 +1,9 @@
-# neetechs_tokenizer/pattern_matcher.py
+"""Backwards-compatible, lexicon-validated pattern matching API."""
+from .morphology import word_analyzer
 
-PATTERNS = {
-    'فاعل': lambda w: len(w) == 4,
-    'مفعول': lambda w: len(w) == 5 and w.startswith('م'),
-    'افتعل': lambda w: len(w) >= 6 and w.startswith('است'),
-}
 
-def match_pattern(word: str, root: str) -> str or None:
-    """
-    Naive pattern matching based on surface form.
-    """
-    for pattern, rule in PATTERNS.items():
-        if rule(word):
-            return pattern
+def match_pattern(word: str, root: str) -> str | None:
+    for analysis in word_analyzer(word)["analyses"]:
+        if analysis["root"] == root:
+            return analysis["pattern"]
     return None

@@ -1,119 +1,56 @@
-# Neetechs Arabic AI — Language Intelligence from the Root
+# Neetechs Tokenizer — Arabic Morphology Baseline
 
-> 🚀 Build smarter. Tokenize faster. Understand deeper. In Arabic — and beyond.
+A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
----
+**Status: v0.2 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
-## 🌍 Why Neetechs?
+## Quick start
 
-Most AI systems treat Arabic like an afterthought — breaking its rich morphology into meaningless chunks.
+    python -m pip install -e .
+    python -m unittest discover -s tests -v
 
-**Neetechs Arabic AI flips that.**
+Example Python:
 
-We start from the root (literally) — using Arabic’s powerful grammar and root-pattern system to deliver:
+    from neetechs_tokenizer import tokenize, wordAnalyzer, get_root
+    print(tokenize("والكاتب استكتبوهم!"))
+    # ['و', 'ال', 'كاتب', 'استكتب', 'و', 'هم', '!']
+    result = wordAnalyzer("استكتبوهم")
+    print(result["analyses"][0]["root"])      # كتب
+    print(result["analyses"][0]["pattern"])   # استفعل
+    print(get_root("مكتوب"))                  # كتب
+    print(get_root("كلمةغيرمعروفة"))          # None
 
-- 🧠 Smarter tokenization
-- ⚡️ Faster model performance
-- 🔍 Cleaner linguistic structure
-- 📉 Smaller vocab size = less compute
-- 💬 Natural grammar-aware generation
+    print(tokenize("والكاتب!", split_clitics=False))  # ['والكاتب', '!']
 
-Whether you're Arabic-speaking or not — this is what efficient language modeling *should* look like.
+## How it works
 
----
+1. **Normalize without losing meaning**: remove optional harakat and tatweel; keep hamza, ta marbuta, and alif maqsura distinct by default.
+2. **Generate candidates**: consider known combinations of conjunctions, definite article, prepositions, and a small set of subject/object suffixes.
+3. **Match known stems**: check a curated starter lexicon, allowing more than one reading of a homograph.
+4. **Validate patterns**: reconstruct each candidate from its root and Arabic template to reject false matches.
+5. **Rank analyses**: sort verified candidates with a deterministic heuristic. Scores are ranking values, **not probabilities**.
 
-## 🧠 What Makes It Different?
+The JSON-compatible word_analyzer(word) result contains word, normalized, and analyses. Each analysis has root, pattern, stem, part_of_speech, prefixes, suffixes, source, and score.
 
-| Feature                   | English AI  | Neetechs Arabic AI           |
-|--------------------------|-------------|-------------------------------|
-| Word-based tokenization  | ✅ Basic     | ❌ Never — we go by roots      |
-| Grammar awareness        | ❌ Weak      | ✅ Full syntactic control      |
-| Diacritic handling       | ❌ Lost      | ✅ Reconstructed intelligently |
-| Morphology compression   | ❌ Redundant | ✅ Token-efficient             |
-| Root-pattern extraction  | ❌ Missing   | ✅ Native                      |
+## Current limitations
 
----
+- Only a **starter set** of sound triliteral stems (e.g. كتب, علم, درس) and a few clitic constructions are supported.
+- No general root discovery, weak-root handling, quadriliteral roots, comprehensive POS tagging, or sentence syntax yet.
+- Conjugation is only partially represented (e.g. وا and وهم); additional affix rules must be reviewed and tested.
+- The existing restore_diacritics, correct_grammar, and translate utilities are illustrative dictionary lookups, not language models.
+- Orthographic alternations and broader contexts need more than surface segmentation. Do not use this prototype as linguistic ground truth.
 
-## 🛠️ Features
+## Public API
 
-- 🧩 **Root & Pattern Tokenizer** — breaks Arabic into its core units
-- 🔍 **Morphology-aware segmentation**
-- ✍️ **Grammar Correction** — built on syntactic truth, not statistical guesses
-- ḥ **Tashkīl Restoration** — adds missing diacritics using context + structure
-- ⚙️ **Mini Language Model** — trained on Arabic morphology instead of raw text
-- 🌐 **Foreign-Developer Friendly** — English comments, docs, and modular design
+- tokenize(text, split_clitics=True): word and punctuation tokenization; optional validated segmentation
+- word_analyzer(word) / wordAnalyzer(word): candidate analyses with ranked results
+- get_root(word) / extract_root(word): top validated root (or None)
+- analyze_tokens(tokens): legacy-compatible token/root/pattern records
+- match_pattern(word, root): validated template for a supplied root
+- clean_text, normalize_arabic, remove_diacritics in neetechs_tokenizer.utils
 
----
+## Next steps
 
-## 💡 Use Cases
+Add a reviewed morphology lexicon (external data file), affix compatibility rules, orthographic transformations, ambiguity evaluation, and corpus-backed regression tests before attempting ML-based token compression or language modeling. Keep tokenizer segmentation separate from root analysis and later semantic analysis.
 
-```python
-from neetechs_tokenizer import tokenize, get_root, restore_diacritics
-
-tokenize("استكتب المعلم الطالب الدرس") 
-# → ['است', 'كتب', 'ال', 'معلم', 'ال', 'طالب', 'الدرس']
-
-get_root("مكتوب")  
-# → 'كتب'
-
-restore_diacritics("احب الذكاء الاصطناعي")  
-# → "أُحِبُّ الذَّكَاءَ الِاصْطِنَاعِيَّ"
-```
-
----
-
-## 👥 Who Should Use This?
-
-- 💬 Language AI devs tired of bloated English models
-- 📚 Arabic learners & linguists
-- 🕌 Qur'anic/Nahwu/NLP researchers
-- 🧪 ML researchers looking for compressed, structured, root-based modeling
-- ⚡️ Anyone who wants **less token bloat and faster inference**
-
----
-
-## 🌐 International Ready
-
-Everything is documented in **English**, with **modular API design**, so even non-Arabic devs can integrate it into their pipelines.
-
-Want to train a custom model in a Semitic, root-based language?  
-Use Neetechs as your blueprint.
-
----
-
-## 🔮 The Vision
-
-**Neetechs Arabic AI** isn't just an Arabic tool.
-
-It's the start of a new class of AI systems —  
-built from the **structure** of language,  
-not the laziness of surface-level text.
-
----
-
-## 📦 Install (coming soon)
-
-```bash
-pip install neetechs_tokenizer
-```
-
-Or clone:
-
-```bash
-git clone https://github.com/neetechs/neetechs_tokenizer
-cd neetechs_tokenizer
-```
-
----
-
-## 📣 Join Us
-
-We’re building a team of devs, linguists, and visionaries.  
-Want to help shape the future of Arabic-native AI?
-
-> Contact: [info@neetechs.com](mailto:info@neetechs.com)  
-> IG: [@neetechs](https://instagram.com/neetechs)
-
----
-
-**Built by Sayed Jihad Al Sayed — refugee-born, root-focused, and future-driven.**
+Repository: https://github.com/jihadelsayed/neetechs_tokenizer · MIT License

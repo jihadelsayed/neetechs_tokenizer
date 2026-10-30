@@ -1,26 +1,22 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
-    name='neetechs_tokenizer',
-    version='0.1.0',
-    description='Arabic root-pattern tokenizer with grammar correction and translation',
-    author='Sayed Jihad Al Sayed',
-    author_email='jelsayed@uab.edu',
-    license='MIT',
+    name="neetechs_tokenizer",
+    version="0.2.0",
+    description="Conservative Arabic tokenizer and starter morphological analyzer",
+    author="Jihad ElSayed",
+    license="MIT",
     packages=find_packages(),
-    install_requires=[
-        'transformers>=4.30.0',
-        'torch',
-        'arabic_reshaper',
-        'python-bidi',
-        'nltk',
-        'tqdm',
-        'requests'
-    ],
+    install_requires=[],
+    extras_require={"solver": ["numpy>=1.24"]},
+    python_requires=">=3.10",
     classifiers=[
-        'Programming Language :: Python :: 3',
-        'Natural Language :: Arabic',
-        'Operating System :: OS Independent'
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Natural Language :: Arabic",
+        "Operating System :: OS Independent",
     ],
-    python_requires='>=3.8'
 )

@@ -1,7 +1,3 @@
-transformers>=4.30.0
-torch
-arabic_reshaper
-python-bidi
-nltk
-tqdm
-requests
+# No third-party dependencies for the core tokenizer.
+# The unrelated legacy linear_solver.py module optionally requires numpy:
+# pip install -e '.[solver]'

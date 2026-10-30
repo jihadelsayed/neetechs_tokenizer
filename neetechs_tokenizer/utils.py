@@ -1,34 +1,29 @@
-# Placeholder
-# neetechs_tokenizer/utils.py
-
+"""Unicode utilities that preserve morphologically significant Arabic letters."""
 import re
+import unicodedata
 
-# Arabic diacritics regex pattern
-DIACRITICS_PATTERN = re.compile(r'[\u064B-\u0652]')
+DIACRITICS_PATTERN = re.compile(r"[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]")
+ARABIC_LETTERS = re.compile(r"^[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]+$")
+
 
 def remove_diacritics(text: str) -> str:
-    """Remove Arabic diacritics (tashkeel) from text."""
-    return DIACRITICS_PATTERN.sub('', text)
+    return DIACRITICS_PATTERN.sub("", text)
 
-def normalize_arabic(text: str) -> str:
-    """Normalize common Arabic letter variants."""
-    text = re.sub(r'[إأآا]', 'ا', text)
-    text = re.sub(r'[ى]', 'ي', text)
-    text = re.sub(r'[ؤئ]', 'ء', text)
-    text = re.sub(r'ة', 'ه', text)
+
+def normalize_arabic(text: str, *, fold_hamza: bool = False) -> str:
+    """Normalize Unicode without collapsing ة/ه or ى/ي.
+
+    Set fold_hamza=True only for fuzzy lookup, not linguistic analysis.
+    """
+    text = unicodedata.normalize("NFKC", text).replace("ـ", "")
+    if fold_hamza:
+        text = re.sub(r"[إأآٱ]", "ا", text)
     return text
 
+
 def is_arabic_word(word: str) -> bool:
-    """Check if a word consists only of Arabic letters."""
-    return all('\u0600' <= c <= '\u06FF' or c == ' ' for c in word)
+    return bool(word) and bool(ARABIC_LETTERS.fullmatch(remove_diacritics(word)))
+
 
 def clean_text(text: str) -> str:
-    """Strip diacritics, normalize letters, and trim whitespace."""
-    text = remove_diacritics(text)
-    text = normalize_arabic(text)
-    return text.strip()
-
-# Optional: test run
-if __name__ == "__main__":
-    raw = "أُحِبُّ التَّعَلُّمَ وَالتَّطْوِيرَ"
-    print("Cleaned:", clean_text(raw))
+    return remove_diacritics(normalize_arabic(text)).strip()

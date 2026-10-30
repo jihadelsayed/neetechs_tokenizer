@@ -1,45 +1,40 @@
-# neetechs_tokenizer/tokenizer.py
+"""Arabic-aware word tokenization with optional validated clitic segmentation."""
+import re
+from .morphology import word_analyzer
+from .utils import clean_text, is_arabic_word
 
-from .utils import clean_text
-from .clitic_handler import split_clitics
-from .root_extractor import extract_root
-from .pattern_matcher import match_pattern
+WORD_RE = re.compile(r"[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]+|[A-Za-z]+(?:'[A-Za-z]+)?|[0-9]+(?:[.,][0-9]+)*|[^\s]", re.UNICODE)
 
-def tokenize(text: str) -> list:
-    """
-    Tokenize Arabic sentence into meaningful units: clitics, roots, stems.
-    """
-    clean = clean_text(text)
-    words = clean.split()
 
-    tokens = []
-    for word in words:
-        clitic_parts = split_clitics(word)
-        tokens.extend(clitic_parts)
+def tokenize(text: str, *, split_clitics: bool = True) -> list[str]:
+    """Tokenize Arabic, keeping unknown words intact instead of guessing cuts."""
+    if not isinstance(text, str):
+        raise TypeError("text must be a string")
+    tokens = WORD_RE.findall(clean_text(text))
+    if not split_clitics:
+        return tokens
+    segmented = []
+    for token in tokens:
+        if not is_arabic_word(token):
+            segmented.append(token)
+            continue
+        analyses = word_analyzer(token)["analyses"]
+        if analyses:
+            best = analyses[0]
+            segmented.extend(best["prefixes"])
+            segmented.append(best["stem"])
+            segmented.extend(s["surface"] for s in best["suffixes"])
+        else:
+            segmented.append(token)
+    return segmented
 
-    return tokens
 
-def analyze_tokens(tokens: list) -> list:
-    """
-    Analyze tokens: root + pattern matching (optional).
-    """
+def analyze_tokens(tokens: list[str]) -> list[dict]:
+    """Retain the original lightweight output shape for existing callers."""
     analyzed = []
     for token in tokens:
-        root = extract_root(token)
-        pattern = match_pattern(token, root) if root else None
-        analyzed.append({
-            "token": token,
-            "root": root,
-            "pattern": pattern
-        })
+        result = word_analyzer(token)
+        best = result["analyses"][0] if result["analyses"] else None
+        analyzed.append({"token": token, "root": best["root"] if best else None,
+                         "pattern": best["pattern"] if best else None})
     return analyzed
-
-# Optional test
-if __name__ == "__main__":
-    example = "استكتب المعلم الطالب الدرس"
-    tokens = tokenize(example)
-    print("Tokens:", tokens)
-
-    analysis = analyze_tokens(tokens)
-    for a in analysis:
-        print(a)
