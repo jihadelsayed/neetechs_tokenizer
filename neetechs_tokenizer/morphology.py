@@ -67,7 +67,14 @@ def word_analyzer(word: str) -> dict:
         )
         if signature not in unique or analysis["score"] > unique[signature]["score"]:
             unique[signature] = analysis
-    analyses = sorted(unique.values(), key=_ranking)
+    # Every exposed analysis must account for the complete normalized
+    # surface. Preserve unknown words rather than returning partial parses.
+    analyses = [
+        a for a in unique.values()
+        if "".join(a["prefixes"]) + a["stem"]
+        + "".join(s["surface"] for s in a["suffixes"]) == normalized
+    ]
+    analyses.sort(key=_ranking)
     return {"word": word, "normalized": normalized, "analyses": analyses}
 
 

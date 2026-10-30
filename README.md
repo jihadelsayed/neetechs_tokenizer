@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.4 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.5 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -116,3 +116,11 @@ Run `python scripts/verify_release.py` from anywhere inside your checkout. It ru
 ## v0.9.4 evaluation terminology
 
 The legacy `negative` and `correct_negative` fields mean **expected-unsupported cases**, not true negatives. Some forms such as `قاموا` are valid Arabic but outside the current lexicon. The report also provides `supported_case_coverage` and `unsupported_case_rejection`; these are in-sample checks, not real-world accuracy metrics. Three noun-article-possessive incompatibility examples were added.
+
+## v0.9.5 full-surface analysis invariant
+
+Every analysis returned by `word_analyzer()` must reconstruct its complete
+normalized word by concatenating prefixes, stem, and suffix surfaces.
+Incomplete parses are discarded. This is a structural safety property and
+does not prove that a morphologically plausible analysis is linguistically
+correct. Added public-API contract tests; runtime validation remains required.
