@@ -1,5 +1,6 @@
 """Run all release checks from the repository root, without extra packages."""
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -17,7 +18,11 @@ def main():
         proc = subprocess.run(command, cwd=ROOT, text=True,
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                               check=False)
-        results[name] = {"passed": proc.returncode == 0,
+        passed = proc.returncode == 0
+        if name == "unit_tests":
+            match = re.search(r"Ran ([0-9]+) tests?", proc.stdout)
+            passed = passed and match is not None and int(match.group(1)) > 0
+        results[name] = {"passed": passed,
                          "exit_code": proc.returncode, "output": proc.stdout[-12000:]}
         print(f"[{name}] {'PASS' if proc.returncode == 0 else 'FAIL'}", flush=True)
     report = {"ready_for_release_checks": all(x["passed"] for x in results.values()),
