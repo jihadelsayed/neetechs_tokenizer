@@ -1,0 +1,33 @@
+"""Run all release checks from the repository root, without extra packages."""
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CHECKS = (
+    ("unit_tests", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"]),
+    ("morphology_regression", [sys.executable, "-m", "neetechs_tokenizer.evaluate"]),
+)
+
+
+def main():
+    results = {}
+    for name, command in CHECKS:
+        proc = subprocess.run(command, cwd=ROOT, text=True,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                              check=False)
+        results[name] = {"passed": proc.returncode == 0,
+                         "exit_code": proc.returncode, "output": proc.stdout[-12000:]}
+        print(f"[{name}] {'PASS' if proc.returncode == 0 else 'FAIL'}", flush=True)
+    report = {"ready_for_release_checks": all(x["passed"] for x in results.values()),
+              "checks": results,
+              "note": "Curated checks do not establish independent Arabic linguistic accuracy."}
+    target = ROOT / "release-check-results.json"
+    target.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {target}")
+    return 0 if report["ready_for_release_checks"] else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

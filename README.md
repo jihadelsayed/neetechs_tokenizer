@@ -108,3 +108,7 @@ For recognized nouns, the analyzer rejects combining the definite article (ال)
 ## v0.9.3 tokenizer invariants
 
 `tokenize()` only emits a split when the concatenated components exactly reproduce the normalized input word. Added regression tests for reversible segmentation, unknown-word preservation, punctuation, and mixed Arabic/English text. The full suite must still be executed before a v1.0 release.
+
+## Local release check (v0.9.x)
+
+Run `python scripts/verify_release.py` from anywhere inside your checkout. It runs the full unit tests and the bundled morphology regression command, then writes `release-check-results.json`. Exit status is nonzero if either check fails. A green result only verifies curated regression cases, not full linguistic accuracy. Do not commit the generated report.
