@@ -54,6 +54,15 @@ class SentenceBenchmarkTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertIsNot(first[0]["analyses"], second[0]["analyses"])
 
+    def test_distinct_workload_smoke(self):
+        result = benchmark(repeats=2, iterations=2, workload="distinct")
+        self.assertEqual(result["tokens_per_run"], 8)
+        self.assertEqual(result["workload"], "distinct")
+
+    def test_reject_unknown_workload(self):
+        with self.assertRaises(ValueError):
+            benchmark(repeats=1, iterations=1, workload="invalid")
+
     def test_reject_invalid_parameters(self):
         for repeats, iterations in ((0, 1), (1, 0), (-1, 2)):
             with self.subTest(repeats=repeats, iterations=iterations):

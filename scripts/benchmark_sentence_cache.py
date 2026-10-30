@@ -28,10 +28,21 @@ def uncached_analysis(text: str) -> list[dict]:
     ]
 
 
-def benchmark(repeats: int = 100, iterations: int = 10) -> dict:
+def benchmark(repeats: int = 100, iterations: int = 10, *, workload: str = "repeated") -> dict:
     if repeats < 1 or iterations < 1:
         raise ValueError("repeats and iterations must be positive")
-    sentence = " ".join(["مكتوب", "الكاتب", "مكتوب", "الكاتب"] * repeats)
+    if workload not in {"repeated", "distinct"}:
+        raise ValueError("workload must be repeated or distinct")
+    if workload == "repeated":
+        words = ["مكتوب", "الكاتب", "مكتوب", "الكاتب"] * repeats
+    else:
+        # Synthetic Arabic-letter tokens; avoids introducing digit boundaries.
+        alphabet = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي"
+        base = len(alphabet)
+        words = ["كلمة" + alphabet[(index // base) % base]
+                 + alphabet[index % base] + alphabet[(index // (base * base)) % base]
+                 for index in range(4 * repeats)]
+    sentence = " ".join(words)
     # Verify equivalent results before collecting timings.
     if analyze_text(sentence) != uncached_analysis(sentence):
         raise RuntimeError("cached and uncached results differ")
@@ -49,6 +60,7 @@ def benchmark(repeats: int = 100, iterations: int = 10) -> dict:
     cached = statistics.median(timings["cached"])
     uncached = statistics.median(timings["uncached"])
     return {
+        "workload": workload,
         "tokens_per_run": 4 * repeats,
         "iterations": iterations,
         "median_seconds": cached,
@@ -62,8 +74,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repeats", type=int, default=100)
     parser.add_argument("--iterations", type=int, default=10)
+    parser.add_argument("--workload", choices=("repeated", "distinct"), default="repeated")
     args = parser.parse_args()
-    for key, value in benchmark(args.repeats, args.iterations).items():
+    for key, value in benchmark(args.repeats, args.iterations, workload=args.workload).items():
         print(f"{key}: {value}")
 
 
