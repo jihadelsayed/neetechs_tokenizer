@@ -2,7 +2,7 @@
 import re
 import unicodedata
 from .morphology import word_analyzer
-from .utils import clean_text, is_arabic_word
+from .utils import clean_text, is_arabic_word, normalize_arabic, remove_diacritics
 
 WORD_RE = re.compile(r"[\u0621-\u063A\u0641-\u064A\u0671-\u06D3]+|[A-Za-z]+(?:'[A-Za-z]+)?|[0-9]+(?:[.,][0-9]+)*|[^\s]", re.UNICODE)
 
@@ -62,7 +62,6 @@ def _original_offset_map(text: str, normalized: str) -> list[tuple[int, int]] | 
             clusters.append((char, index, index + 1))
     expanded = []
     for value, start, end in clusters:
-        from .utils import normalize_arabic, remove_diacritics
         rendered = remove_diacritics(normalize_arabic(value))
         expanded.extend((ch, start, end) for ch in rendered)
     while expanded and expanded[0][0].isspace():

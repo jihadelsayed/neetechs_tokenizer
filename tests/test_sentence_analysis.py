@@ -40,6 +40,19 @@ class SentenceAnalysisTests(unittest.TestCase):
         self.assertEqual((rows[0]["start"], rows[0]["end"]), (0, 3))
         self.assertEqual((rows[0]["original_start"], rows[0]["original_end"]), (2, 8))
 
+    def test_lam_alef_compatibility_ligature_offsets(self):
+        text = "ﻻ!"
+        rows = analyze_text(text, include_original_offsets=True)
+        self.assertEqual([row["token"] for row in rows], ["لا", "!"])
+        self.assertEqual((rows[0]["original_start"], rows[0]["original_end"]), (0, 1))
+        self.assertEqual(text[rows[0]["original_start"]:rows[0]["original_end"]], "ﻻ")
+
+    def test_tatweel_and_diacritics_offsets(self):
+        text = "كـِتاب!"
+        rows = analyze_text(text, include_original_offsets=True)
+        self.assertEqual(rows[0]["token"], "كتاب")
+        self.assertEqual(text[rows[0]["original_start"]:rows[0]["original_end"]], "كـِتاب")
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):

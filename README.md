@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.24 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.25 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -200,3 +200,7 @@ Use `analyze_text("مكتوب، ...")` to retrieve each normalized token, its ch
 ## v0.9.24 original offsets for sentence analysis
 
 `analyze_text(text, include_original_offsets=True)` adds original_start/original_end spans in the input string, including Arabic combining marks and leading whitespace. Normalized start/end remain unchanged. For Unicode compositions where cluster-by-cluster mapping cannot reproduce whole-text normalization, these optional offsets return `None` rather than inventing invalid positions. Tests cover vowel marks and spacing; full-suite verification pending.
+
+## v0.9.25 Unicode offset regressions
+
+Expanded sentence offset tests for lam–alef compatibility ligatures and tatweel with Arabic vowel marks. Normalization helper imports now occur at module level rather than per text cluster. Original offsets remain optional and refer to the unnormalized input. Full suite verification still outstanding.
