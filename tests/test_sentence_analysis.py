@@ -123,6 +123,17 @@ class SentenceAnalysisTests(unittest.TestCase):
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]["root"], "كتب")
 
+    def test_repeated_word_analyzed_once_per_call(self):
+        from unittest.mock import patch
+        from neetechs_tokenizer import tokenizer as tokenizer_module
+        real = tokenizer_module.word_analyzer
+        with patch.object(tokenizer_module, "word_analyzer", wraps=real) as mocked:
+            rows = analyze_text("مكتوب مكتوب! مكتوب")
+        self.assertEqual([row["token"] for row in rows],
+                         ["مكتوب", "مكتوب", "!", "مكتوب"])
+        self.assertEqual(mocked.call_count, 1)
+        self.assertEqual(rows[0]["analyses"], rows[1]["analyses"])
+
     def test_empty_and_type_validation(self):
         self.assertEqual(analyze_text(""), [])
         with self.assertRaises(TypeError):

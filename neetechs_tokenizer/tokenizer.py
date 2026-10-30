@@ -84,9 +84,15 @@ def analyze_text(text: str, *, include_segments: bool = False, include_original_
     normalized = clean_text(text)
     results = []
     source_map = _original_offset_map(text, normalized) if include_original_offsets else None
+    analysis_cache = {}
     for match in WORD_RE.finditer(normalized):
         token = match.group()
-        analyses = word_analyzer(token)["analyses"] if is_arabic_word(token) else []
+        if is_arabic_word(token):
+            if token not in analysis_cache:
+                analysis_cache[token] = word_analyzer(token)["analyses"]
+            analyses = analysis_cache[token]
+        else:
+            analyses = []
         record = {
             "token": token,
             "start": match.start(),
