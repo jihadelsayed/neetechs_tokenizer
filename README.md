@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.22 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.23 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -192,3 +192,7 @@ When a test process times out, the release report now preserves its partial outp
 ## v0.9.22 sentence-level analysis
 
 Use `analyze_text("مكتوب، ...")` to retrieve each normalized token, its character start/end offsets, and every recognized morphological analysis. Unrecognized words and punctuation remain in place with empty analysis arrays. Offsets refer to the **normalized text**, not the original text before diacritic removal. Three unit tests added; the full current-revision test suite remains unverified.
+
+## v0.9.23 optional sentence segmentation
+
+`analyze_text(text, include_segments=True)` adds a `segments` list to each token using the same validated top analysis as `tokenize()`. Concatenating each list reproduces its normalized token. The default result shape remains unchanged. Unknown words and punctuation get one-element lists. Tests were added but require full runtime verification.

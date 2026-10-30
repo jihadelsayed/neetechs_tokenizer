@@ -45,12 +45,12 @@ def analyze_tokens(tokens: list[str]) -> list[dict]:
     return analyzed
 
 
-def analyze_text(text: str) -> list[dict]:
+def analyze_text(text: str, *, include_segments: bool = False) -> list[dict]:
     """Analyze a normalized sentence token-by-token without destructive splitting.
 
     Each result preserves the surface token and all available morphology
     candidates. Punctuation, non-Arabic and unknown words remain visible
-    with an empty analyses list.
+    with an empty analyses list. Optional segments are lossless.
     """
     if not isinstance(text, str):
         raise TypeError("text must be a string")
@@ -59,10 +59,19 @@ def analyze_text(text: str) -> list[dict]:
     for match in WORD_RE.finditer(normalized):
         token = match.group()
         analyses = word_analyzer(token)["analyses"] if is_arabic_word(token) else []
-        results.append({
+        record = {
             "token": token,
             "start": match.start(),
             "end": match.end(),
             "analyses": analyses,
-        })
+        }
+        if include_segments:
+            if analyses:
+                best = analyses[0]
+                pieces = (list(best["prefixes"]) + [best["stem"]]
+                          + [s["surface"] for s in best["suffixes"]])
+                record["segments"] = pieces if all(pieces) and "".join(pieces) == token else [token]
+            else:
+                record["segments"] = [token]
+        results.append(record)
     return results
