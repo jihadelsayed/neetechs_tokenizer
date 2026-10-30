@@ -15,15 +15,19 @@ CHECKS = (
 def main():
     results = {}
     for name, command in CHECKS:
-        proc = subprocess.run(command, cwd=ROOT, text=True,
-                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                              check=False)
-        passed = proc.returncode == 0
+        try:
+            proc = subprocess.run(command, cwd=ROOT, text=True,
+                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                  check=False, timeout=120)
+            exit_code, output = proc.returncode, proc.stdout
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            exit_code, output = 1, f"{type(exc).__name__}: {exc}"
+        passed = exit_code == 0
         if name == "unit_tests":
-            match = re.search(r"Ran ([0-9]+) tests?", proc.stdout)
+            match = re.search(r"Ran ([0-9]+) tests?", output)
             passed = passed and match is not None and int(match.group(1)) > 0
         results[name] = {"passed": passed,
-                         "exit_code": proc.returncode, "output": proc.stdout[-12000:]}
+                         "exit_code": exit_code, "output": output[-12000:]}
         print(f"[{name}] {'PASS' if passed else 'FAIL'}", flush=True)
     report = {"ready_for_release_checks": all(x["passed"] for x in results.values()),
               "checks": results,

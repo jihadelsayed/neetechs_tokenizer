@@ -43,3 +43,25 @@ class ReleaseGateTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class ReleaseProcessFailureTests(unittest.TestCase):
+    def test_launch_failure_reported(self):
+        import json
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(verify_release, "ROOT", Path(directory)):
+                with patch.object(verify_release.subprocess, "run", side_effect=OSError("blocked")):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        status = verify_release.main()
+                report = json.loads((Path(directory) / "release-check-results.json").read_text())
+        self.assertEqual(status, 1)
+        self.assertFalse(report["ready_for_release_checks"])
+        self.assertIn("OSError", report["checks"]["unit_tests"]["output"])
+
+    def test_timeout_reported(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(verify_release, "ROOT", Path(directory)):
+                with patch.object(verify_release.subprocess, "run", side_effect=subprocess.TimeoutExpired("unit", 120)):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        status = verify_release.main()
+        self.assertEqual(status, 1)
