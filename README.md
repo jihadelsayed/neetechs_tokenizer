@@ -2,7 +2,7 @@
 
 A small, transparent, **rule-based Arabic tokenizer and morphological analyzer** written in Python. It prioritizes validated analyses over aggressive stem stripping.
 
-**Status: v0.9.6 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
+**Status: v0.9.7 prototype.** The starter lexicon is intentionally small. This is not yet a complete morphological, syntactic, semantic, diacritization, or AI model. Unknown words are retained instead of assigned invented roots.
 
 ## Quick start
 
@@ -128,3 +128,7 @@ correct. Added public-API contract tests; runtime validation remains required.
 ## v0.9.6 independent evaluation interface
 
 Use `python -m neetechs_tokenizer.benchmark annotations.json` with separately annotated JSON labels, following `docs/benchmark-schema.json`. Outputs candidate-root recall and coverage. **The included JSON file is an input-format example, not an independent gold-standard corpus.** Root ambiguity means this metric must not be read as top-1 accuracy. Evaluation of a genuine independent dataset remains outstanding.
+
+## v0.9.7 top-ranked root evaluation
+
+The external benchmark now reports `top_one_root_accuracy` separately from `root_recall_at_any_candidate`. This distinguishes whether the expected root is returned at all from whether it is ranked first. Both are meaningful only when evaluated on independently annotated held-out inputs. Existing result fields are preserved.

@@ -15,12 +15,16 @@ def benchmark_cases(cases):
         raise ValueError("Expected cases list")
     correct = 0
     supported = 0
+    top_one_correct = 0
     errors = []
     for index, case in enumerate(cases):
         if not isinstance(case, dict) or not isinstance(case.get("word"), str) or not isinstance(case.get("root"), str):
             raise ValueError(f"Case {index} requires string word and root")
         predicted = word_analyzer(case["word"])["analyses"]
         roots = {a["root"] for a in predicted}
+        top_root = predicted[0]["root"] if predicted else None
+        if top_root == case["root"]:
+            top_one_correct += 1
         if roots:
             supported += 1
         if case["root"] in roots:
@@ -29,7 +33,11 @@ def benchmark_cases(cases):
             errors.append({"index": index, "word": case["word"], "expected_root": case["root"], "predicted_roots": sorted(roots)})
     n = len(cases)
     return {"total": n, "root_recall_at_any_candidate": correct / n if n else None,
-            "coverage": supported / n if n else None, "errors": errors,
+            "coverage": supported / n if n else None,
+            "top_one_root_accuracy": top_one_correct / n if n else None,
+            "top_one_correct": top_one_correct,
+            "top_one_errors": n - top_one_correct,
+            "errors": errors,
             "note": "Measured only against the supplied annotations. No claim of independently verified labels."}
 
 
