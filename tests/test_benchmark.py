@@ -106,7 +106,8 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(both["tie_aware_top_accuracy"], 1.0)
 
     def test_empty(self):
-        self.assertIsNone(benchmark_cases([])["coverage"])
+        with self.assertRaisesRegex(ValueError, "nonempty"):
+            benchmark_cases([])
 
     def test_bad_labels_rejected(self):
         with self.assertRaises(ValueError):

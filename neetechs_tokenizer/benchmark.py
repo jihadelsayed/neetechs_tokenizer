@@ -27,8 +27,8 @@ def _reference_roots(case, index):
 
 
 def benchmark_cases(cases):
-    if not isinstance(cases, list):
-        raise ValueError("Expected cases list")
+    if not isinstance(cases, list) or not cases:
+        raise ValueError("Benchmark requires a nonempty cases list")
     correct = 0
     supported = 0
     top_one_correct = 0
