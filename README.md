@@ -62,3 +62,7 @@ Repository: https://github.com/jihadelsayed/neetechs_tokenizer · MIT License
 ## v0.5: reviewed imperfect and imperative forms
 
 `analyze_imperfect('يكتب')`, `analyze_imperfect('تكتبون')`, and `analyze_imperative('اكتب')` use explicitly reviewed Form I stem lists. Unvowelled ambiguity is retained, and these results are also available via `wordAnalyzer()`. This is not exhaustive: weak roots, Form II–X imperfect derivation, jussive/subjunctive, imperative plurals, and sentence-level interpretation are not yet supported. Affix compatibility remains limited.
+
+## v0.6: candidate-first analysis
+
+The analyzer generates reversible prefix/stem/suffix combinations with `priority_identifier()` and only validates stems found in the reviewed lexicon. Prefix/suffix compatibility is checked before root/template matching. Bare `س` on dictionary perfect verbs was removed to avoid false future-tense analyses. Scores are deterministic prioritization heuristics, not probabilities. Candidate generation does not imply every returned candidate is linguistically correct; only validated analyses are returned by `wordAnalyzer()`.
