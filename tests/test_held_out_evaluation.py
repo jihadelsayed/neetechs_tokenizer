@@ -93,6 +93,28 @@ class HeldOutEvaluationTests(unittest.TestCase):
                 run_evaluation(self.dataset, self.manifest, revision="a" * 40)
             benchmark.assert_not_called()
 
+    def test_rejects_dataset_replaced_after_provenance_check(self):
+        # A second read must not score bytes different from the verified hash.
+        original = self.dataset.read_bytes()
+        replacement = original + b" "
+        real_read_bytes = Path.read_bytes
+        reads = 0
+
+        def swapped_read_bytes(path):
+            nonlocal reads
+            if Path(path) == self.dataset:
+                reads += 1
+                if reads == 2:
+                    return replacement
+            return real_read_bytes(path)
+
+        with patch("scripts.run_held_out_evaluation.Path.read_bytes",
+                   autospec=True, side_effect=swapped_read_bytes):
+            with patch("scripts.run_held_out_evaluation.benchmark_cases") as benchmark:
+                with self.assertRaisesRegex(ValueError, "changed after provenance"):
+                    run_evaluation(self.dataset, self.manifest, revision="a" * 40)
+                benchmark.assert_not_called()
+
     def test_rejects_different_source_revision(self):
         with self.assertRaisesRegex(ValueError, "differs"):
             run_evaluation(self.dataset, self.manifest, revision="b" * 40)
