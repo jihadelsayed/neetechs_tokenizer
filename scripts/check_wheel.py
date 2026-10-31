@@ -18,6 +18,9 @@ REQUIRED = {
 
 def inspect_wheel(wheel_path):
     with ZipFile(wheel_path) as archive:
+        corrupted = archive.testzip()
+        if corrupted is not None:
+            raise ValueError(f"Corrupted wheel archive member: {corrupted}")
         names = set(archive.namelist())
         missing = sorted(REQUIRED - names)
         metadata_paths = [name for name in names
