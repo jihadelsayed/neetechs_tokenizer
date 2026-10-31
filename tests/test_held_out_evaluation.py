@@ -18,7 +18,9 @@ class HeldOutEvaluationTests(unittest.TestCase):
             "schema_version": 1,
             "metadata": {"status": "adjudicated_not_independently_verified"},
             "cases": [{"word": "مكتوب", "roots": ["كتب"]}],
-            "audit": {"agreement_rate": 1.0, "adjudications": []}
+            "exclusions": [],
+            "audit": {"agreement_rate": 1.0, "adjudications": [],
+                      "total_reviewed": 1, "included_cases": 1, "excluded_cases": 0}
         }), encoding="utf-8")
         self.manifest.write_text(json.dumps({
             "frozen_commit": "a" * 40,
@@ -61,6 +63,33 @@ class HeldOutEvaluationTests(unittest.TestCase):
         self.assertEqual(result["frozen_commit"], "a" * 40)
         self.assertEqual(result["metrics"]["total"], 1)
         self.assertFalse(result["independent_accuracy_verified"])
+
+    def test_exclusions_count_toward_original_denominator(self):
+        payload = json.loads(self.dataset.read_text(encoding="utf-8"))
+        payload["exclusions"] = [
+            {"word": "غامض", "status": "uncertain", "reason": "No context"}
+        ]
+        payload["audit"].update(total_reviewed=2, included_cases=1, excluded_cases=1)
+        self.dataset.write_text(json.dumps(payload), encoding="utf-8")
+        manifest = json.loads(self.manifest.read_text(encoding="utf-8"))
+        manifest["dataset_sha256"] = hashlib.sha256(self.dataset.read_bytes()).hexdigest()
+        self.manifest.write_text(json.dumps(manifest), encoding="utf-8")
+        result = run_evaluation(self.dataset, self.manifest, revision="a" * 40)
+        self.assertEqual(result["review_metrics"]["total_reviewed"], 2)
+        self.assertEqual(result["review_metrics"]["excluded_cases"], 1)
+        self.assertEqual(result["review_metrics"]["annotation_inclusion_rate"], 0.5)
+        self.assertEqual(result["review_metrics"]["analyzer_coverage_of_all_reviewed"], 0.5)
+        self.assertEqual(result["review_metrics"]["top_one_correct_of_all_reviewed"], 0.5)
+
+    def test_rejects_inconsistent_review_count(self):
+        payload = json.loads(self.dataset.read_text(encoding="utf-8"))
+        payload["audit"]["total_reviewed"] = 99
+        self.dataset.write_text(json.dumps(payload), encoding="utf-8")
+        manifest = json.loads(self.manifest.read_text(encoding="utf-8"))
+        manifest["dataset_sha256"] = hashlib.sha256(self.dataset.read_bytes()).hexdigest()
+        self.manifest.write_text(json.dumps(manifest), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "reconcile"):
+            run_evaluation(self.dataset, self.manifest, revision="a" * 40)
 
     def test_rejects_different_source_revision(self):
         with self.assertRaisesRegex(ValueError, "differs"):
