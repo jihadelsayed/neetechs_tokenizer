@@ -2,7 +2,10 @@
 import argparse
 import json
 from pathlib import Path
-from scripts.review_agreement import adjudicate
+if __package__:
+    from .review_agreement import adjudicate
+else:
+    from review_agreement import adjudicate
 
 
 def resolve_reviews(reviewer_a, reviewer_b, decisions):
