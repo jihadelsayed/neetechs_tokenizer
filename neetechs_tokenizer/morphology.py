@@ -7,6 +7,7 @@ from .lexicon import generate_form, load_lexicon
 from .conjugation import analyze_perfect
 from .verb_forms import analyze_imperfect, analyze_imperative
 from .weak_forms import analyze_weak_verb
+from .validation import compatible_affixes, valid_analysis
 
 
 def _ranking(analysis: dict) -> tuple:
@@ -30,9 +31,7 @@ def word_analyzer(word: str) -> dict:
                 continue
             # Standard Arabic does not combine noun definite article
             # with an attached possessive pronoun.
-            if (pos == "noun" and "ال" in candidate.prefixes
-                    and any(label.startswith("possessive-or-object:")
-                            for label in candidate.labels)):
+            if not compatible_affixes(candidate.prefixes, candidate.labels, pos):
                 continue
             if generate_form(root, pattern) != candidate.stem:
                 continue
@@ -69,11 +68,8 @@ def word_analyzer(word: str) -> dict:
             unique[signature] = analysis
     # Every exposed analysis must account for the complete normalized
     # surface. Preserve unknown words rather than returning partial parses.
-    analyses = [
-        a for a in unique.values()
-        if "".join(a["prefixes"]) + a["stem"]
-        + "".join(s["surface"] for s in a["suffixes"]) == normalized
-    ]
+    analyses = [a for a in unique.values()
+                if valid_analysis(normalized, a)]
     analyses.sort(key=_ranking)
     return {"word": word, "normalized": normalized, "analyses": analyses}
 
