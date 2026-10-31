@@ -26,7 +26,7 @@ def resolve_reviews(reviewer_a, reviewer_b, decisions):
         status = decision.get("status", "annotated")
         if status == "annotated":
             if not isinstance(roots, list) or not roots or any(
-                not isinstance(r, str) or not r.strip() for r in roots
+                not isinstance(r, str) or not r.strip() or r != r.strip() for r in roots
             ) or len(roots) != len(set(roots)):
                 raise ValueError(f"Invalid adjudicated roots: {word}")
         elif status in ("uncertain", "out_of_scope"):
