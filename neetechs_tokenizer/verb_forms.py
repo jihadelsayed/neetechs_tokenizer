@@ -19,6 +19,17 @@ IMPERATIVES = {
     "عمل": "اعمل", "حفظ": "احفظ", "فهم": "افهم",
     "طلب": "اطلب", "شرب": "اشرب", "سمع": "اسمع", "لعب": "العب",
 }
+# Explicitly attested imperative forms for two reviewed sound roots.
+# Keep these lexical rather than generating forms for unreviewed verbs.
+IMPERATIVE_ADDITIONS = {
+    "اكتبي": ("كتب", "singular", "feminine"),
+    "اكتبا": ("كتب", "dual", None),
+    "اكتبوا": ("كتب", "plural", "masculine"),
+    "افتحي": ("فتح", "singular", "feminine"),
+    "افتحا": ("فتح", "dual", None),
+    "افتحوا": ("فتح", "plural", "masculine"),
+}
+
 # person marker, ending, grammatical readings. All readings reflect ambiguity
 # of UNVOWELLED surface forms. No mood assigned where vowels are missing.
 IMPERFECT_RULES = (
@@ -58,11 +69,15 @@ def analyze_imperative(word: str) -> list[dict]:
     if not isinstance(word, str):
         raise TypeError("word must be a string")
     surface = clean_text(word)
+    readings = [(root, "singular", "masculine")
+                for root, form in IMPERATIVES.items() if form == surface]
+    if surface in IMPERATIVE_ADDITIONS:
+        readings.append(IMPERATIVE_ADDITIONS[surface])
     return [
         {"root": root, "pattern": "فعل", "stem": surface,
          "part_of_speech": "verb", "prefixes": [], "suffixes": [],
-         "tense": "imperative", "person": 2, "number": "singular",
-         "gender": "masculine", "source": "reviewed_imperative_forms",
+         "tense": "imperative", "person": 2, "number": number,
+         "gender": gender, "source": "reviewed_imperative_forms",
          "score": 0.88}
-        for root, form in IMPERATIVES.items() if form == surface
+        for root, number, gender in readings
     ]
