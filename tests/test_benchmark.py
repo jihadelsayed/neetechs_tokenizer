@@ -119,7 +119,7 @@ class BenchmarkTests(unittest.TestCase):
             result = benchmark_cases([{"word": word, "root": "كتب"} for word in scenarios])
         self.assertEqual(result["total"], 5)
         self.assertEqual(result["error_category_counts"], {
-            "abstained": 1, "wrong_top_root": 2,
+            "abstained": 1, "wrong_top_root": 3,
             "ambiguous_top_root": 1, "expected_root_missing": 1,
         })
         self.assertEqual(result["selective_coverage"], 3 / 5)
@@ -129,7 +129,7 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(result["case_results"][2]["error_categories"],
                          ["wrong_top_root", "expected_root_missing"])
         self.assertEqual(result["case_results"][3]["error_categories"],
-                         ["ambiguous_top_root"])
+                         ["wrong_top_root", "ambiguous_top_root"])
         self.assertEqual(result["case_results"][4]["error_categories"], ["abstained"])
 
     def test_all_abstain_has_no_selective_accuracy(self):
