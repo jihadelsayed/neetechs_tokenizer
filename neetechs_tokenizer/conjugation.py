@@ -43,6 +43,26 @@ def analyze_perfect(word: str) -> list[dict]:
                     "gender": gender, "source": "perfect_conjugation_rule",
                     "score": 0.92 if ending else 0.89,
                 })
+    # Reviewed third-person masculine singular perfect + object pronouns.
+    # Do not infer subject/object roles from a bare suffix alone.
+    for ending, object_label in (
+        ("ه", "3ms"), ("ها", "3fs"), ("هم", "3mp"),
+    ):
+        if not normalized.endswith(ending):
+            continue
+        stem = normalized[:-len(ending)]
+        for root, pattern, pos in load_lexicon().get(stem, ()):
+            if pos != "verb" or pattern not in ("فعل", "استفعل"):
+                continue
+            results.append({
+                "root": root, "pattern": pattern, "stem": stem,
+                "part_of_speech": "verb", "prefixes": [],
+                "suffixes": [{"surface": ending,
+                              "function": "perfect_object:" + object_label}],
+                "tense": "perfect", "person": 3, "number": "singular",
+                "gender": "masculine", "source": "perfect_object_pronoun_rule",
+                "score": 0.92,
+            })
     # Unvowelled نا also permits a 3ms perfect verb + 1pl object pronoun:
     # كتبنا = katabna (we wrote) OR katabanā (he wrote us).
     # Do not force one reading without vowels or sentence context.
