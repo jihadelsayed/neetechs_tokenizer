@@ -38,8 +38,8 @@ class HeldOutEvaluationTests(unittest.TestCase):
     def test_dirty_analyzer_source_rejected(self):
         from subprocess import CompletedProcess
         calls = [
-            CompletedProcess(["git"], 0, stdout="a" * 40 + "\\n"),
-            CompletedProcess(["git"], 0, stdout=" M neetechs_tokenizer/morphology.py\\n"),
+            CompletedProcess(["git"], 0, stdout="a" * 40 + "\n"),
+            CompletedProcess(["git"], 0, stdout=" M neetechs_tokenizer/morphology.py\n"),
         ]
         with patch("scripts.run_held_out_evaluation.subprocess.run",
                    side_effect=calls):
@@ -49,7 +49,7 @@ class HeldOutEvaluationTests(unittest.TestCase):
     def test_clean_analyzer_source_accepted(self):
         from subprocess import CompletedProcess
         calls = [
-            CompletedProcess(["git"], 0, stdout="a" * 40 + "\\n"),
+            CompletedProcess(["git"], 0, stdout="a" * 40 + "\n"),
             CompletedProcess(["git"], 0, stdout=""),
         ]
         with patch("scripts.run_held_out_evaluation.subprocess.run",
