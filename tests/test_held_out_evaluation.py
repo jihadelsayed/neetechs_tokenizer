@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.run_held_out_evaluation import run_evaluation
+from scripts.run_held_out_evaluation import run_evaluation, frozen_source_revision
 
 
 class HeldOutEvaluationTests(unittest.TestCase):
@@ -32,6 +32,27 @@ class HeldOutEvaluationTests(unittest.TestCase):
 
     def tearDown(self):
         self.temp.cleanup()
+
+    def test_dirty_analyzer_source_rejected(self):
+        from subprocess import CompletedProcess
+        calls = [
+            CompletedProcess(["git"], 0, stdout="a" * 40 + "\\n"),
+            CompletedProcess(["git"], 0, stdout=" M neetechs_tokenizer/morphology.py\\n"),
+        ]
+        with patch("scripts.run_held_out_evaluation.subprocess.run",
+                   side_effect=calls):
+            with self.assertRaisesRegex(ValueError, "uncommitted"):
+                frozen_source_revision()
+
+    def test_clean_analyzer_source_accepted(self):
+        from subprocess import CompletedProcess
+        calls = [
+            CompletedProcess(["git"], 0, stdout="a" * 40 + "\\n"),
+            CompletedProcess(["git"], 0, stdout=""),
+        ]
+        with patch("scripts.run_held_out_evaluation.subprocess.run",
+                   side_effect=calls):
+            self.assertEqual(frozen_source_revision(), "a" * 40)
 
     def test_report_includes_frozen_versions_not_accuracy_approval(self):
         result = run_evaluation(self.dataset, self.manifest, revision="a" * 40)
