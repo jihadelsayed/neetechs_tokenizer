@@ -1,4 +1,6 @@
 import csv
+import base64
+import hashlib
 import io
 import json
 import tempfile
@@ -25,7 +27,9 @@ class WheelVerificationTests(unittest.TestCase):
         stream = io.StringIO()
         writer = csv.writer(stream)
         for name in sorted(files):
-            writer.writerow([name, "", ""])
+            payload = files[name].encode("utf-8")
+            digest = base64.urlsafe_b64encode(hashlib.sha256(payload).digest()).rstrip(b"=").decode("ascii")
+            writer.writerow([name, "sha256=" + digest, str(len(payload))])
         writer.writerow([records, "", ""])
         files[records] = stream.getvalue()
         with ZipFile(destination, "w") as archive:
@@ -47,6 +51,21 @@ class WheelVerificationTests(unittest.TestCase):
             self.assertIn(b"# test fixture", data)
             path.write_bytes(data.replace(b"# test fixture", b"! test fixture", 1))
             with self.assertRaisesRegex(ValueError, "Corrupted wheel"):
+                inspect_wheel(path)
+
+    def test_record_hash_mismatch_fails_even_with_valid_zip_crc(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "package.whl"
+            self.make_wheel(path)
+            with ZipFile(path) as archive:
+                files = {name: archive.read(name) for name in archive.namelist()}
+            # Rebuild the ZIP after tampering, so the ZIP CRC is correct but
+            # the RECORD digest still describes the unmodified content.
+            files["neetechs_tokenizer/morphology.py"] = b"# tampered fixture"
+            with ZipFile(path, "w") as archive:
+                for name, data in files.items():
+                    archive.writestr(name, data)
+            with self.assertRaisesRegex(ValueError, "hash mismatch"):
                 inspect_wheel(path)
 
     def test_missing_bundled_lexicon_fails(self):
