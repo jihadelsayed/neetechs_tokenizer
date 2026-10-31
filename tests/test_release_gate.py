@@ -58,7 +58,7 @@ class ReleaseGateTests(unittest.TestCase):
                 with patch.object(verify_release.subprocess, "run", side_effect=fake_run):
                     with contextlib.redirect_stdout(io.StringIO()):
                         status = verify_release.main()
-            report = json.loads((Path(directory) / "release-check-results.json").read_text())
+                report = json.loads((Path(directory) / "release-check-results.json").read_text())
         self.assertEqual(status, 1)
         self.assertFalse(report["checks"]["syntax_compile"]["passed"])
 
