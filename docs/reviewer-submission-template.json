@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "status": "template_not_annotated",
+    "instructions": "Replace cases with the frozen word set; annotate blindly. Do not submit an empty file.",
+    "language_variety": "",
+    "reviewer_id": "",
+    "annotation_guide": "docs/annotation-guide.md"
+  },
+  "cases": []
+}
