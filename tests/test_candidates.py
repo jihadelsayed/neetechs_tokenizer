@@ -32,6 +32,23 @@ class CandidateTests(unittest.TestCase):
                 self.assertEqual(wordAnalyzer(word)["analyses"], [])
                 self.assertEqual(tokenize(word), [word])
 
+    def test_article_possessive_candidates_rejected_early(self):
+        for word in ("الكاتبهم", "والكاتبها", "بالكتابه",
+                     "وبالكتابهم", "وكالمفتاحها"):
+            with self.subTest(word=word):
+                self.assertFalse(any(
+                    "ال" in candidate.prefixes and
+                    any(label.startswith("possessive-or-object:")
+                        for label in candidate.labels)
+                    for candidate in priority_identifier(word)
+                ))
+
+    def test_bare_noun_possessive_candidate_retained(self):
+        self.assertTrue(any(
+            candidate.stem == "كتاب" and candidate.suffixes == ("ه",)
+            for candidate in priority_identifier("كتابه")
+        ))
+
     def test_possessive_without_article_still_supported(self):
         self.assertTrue(any(
             a["part_of_speech"] == "noun"
