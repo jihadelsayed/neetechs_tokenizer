@@ -309,6 +309,31 @@
       "word": "افتحوا",
       "root": "فتح",
       "tense": "imperative"
+    },
+    {
+      "word": "كتبه",
+      "root": "كتب",
+      "tense": "perfect"
+    },
+    {
+      "word": "كتبها",
+      "root": "كتب",
+      "tense": "perfect"
+    },
+    {
+      "word": "كتبهم",
+      "root": "كتب",
+      "tense": "perfect"
+    },
+    {
+      "word": "فتحها",
+      "root": "فتح",
+      "tense": "perfect"
+    },
+    {
+      "word": "استكتبهم",
+      "root": "كتب",
+      "tense": "perfect"
     }
   ]
 }
