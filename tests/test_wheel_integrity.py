@@ -25,7 +25,7 @@ class WheelVerificationTests(unittest.TestCase):
         )
         if "WHEEL" not in omit:
             files["neetechs_tokenizer-0.9.29.dist-info/WHEEL"] = (
-                "Wheel-Version: 1.0\\nGenerator: test fixture\\nRoot-Is-Purelib: true\\nTag: py3-none-any\\n"
+                "Wheel-Version: 1.0\nGenerator: test fixture\nRoot-Is-Purelib: true\nTag: py3-none-any\n"
             )
         records = "neetechs_tokenizer-0.9.29.dist-info/RECORD"
         stream = io.StringIO()
