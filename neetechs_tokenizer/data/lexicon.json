@@ -247,6 +247,96 @@
       "root": "طلب",
       "pattern": "مفعول",
       "pos": "noun"
+    },
+    {
+      "surface": "نظر",
+      "root": "نظر",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "ناظر",
+      "root": "نظر",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "منظور",
+      "root": "نظر",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "رسم",
+      "root": "رسم",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "راسم",
+      "root": "رسم",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مرسوم",
+      "root": "رسم",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "حمل",
+      "root": "حمل",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "حامل",
+      "root": "حمل",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "محمول",
+      "root": "حمل",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "زرع",
+      "root": "زرع",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "زارع",
+      "root": "زرع",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مزروع",
+      "root": "زرع",
+      "pattern": "مفعول",
+      "pos": "noun"
+    },
+    {
+      "surface": "غسل",
+      "root": "غسل",
+      "pattern": "فعل",
+      "pos": "verb"
+    },
+    {
+      "surface": "غاسل",
+      "root": "غسل",
+      "pattern": "فاعل",
+      "pos": "noun"
+    },
+    {
+      "surface": "مغسول",
+      "root": "غسل",
+      "pattern": "مفعول",
+      "pos": "noun"
     }
   ]
 }
