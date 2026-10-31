@@ -13,8 +13,10 @@ def adjudicate(reviews_a, reviews_b):
         for case in reviews:
             if not isinstance(case, dict) or not isinstance(case.get("word"), str):
                 raise ValueError("Each annotation requires a word")
-            word = case["word"].strip()
-            if not word or word in indexed:
+            word = case["word"]
+            if not word or word != word.strip():
+                raise ValueError(f"Reviewer word must be preserved exactly: {word!r}")
+            if word in indexed:
                 raise ValueError(f"Empty or duplicate word: {word!r}")
             status = case.get("status", "annotated")
             if status == "annotated":
