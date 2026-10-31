@@ -3,6 +3,7 @@
 This command deliberately does not claim independent accuracy certification.
 """
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -45,7 +46,10 @@ def run_evaluation(dataset, manifest, *, revision=None):
             f"Analyzer revision differs from frozen commit: "
             f"{actual_revision} != {verified['frozen_commit']}"
         )
-    payload = json.loads(Path(dataset).read_text(encoding="utf-8"))
+    raw = Path(dataset).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != verified["dataset_sha256"]:
+        raise ValueError("Dataset SHA-256 changed after provenance verification")
+    payload = json.loads(raw)
     cases = payload["cases"]
     exclusions = payload.get("exclusions", [])
     audit = payload.get("audit", {})
