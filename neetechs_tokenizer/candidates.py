@@ -37,6 +37,11 @@ def priority_identifier(word: str) -> list[Candidate]:
             allowed = tuple(pos for pos in prefix_pos if pos in suffix_pos)
             if not allowed:
                 continue
+            # The definite article and a possessive suffix cannot coexist
+            # on the same noun. Reject this impossible candidate early.
+            if ("ال" in prefix_parts and
+                    any(label.startswith("possessive-or-object:") for label in labels)):
+                continue
             # The definite article cannot attach to verbs. A future
             # marker cannot be applied to bare perfect dictionary stems.
             if "س" in prefix_parts:
