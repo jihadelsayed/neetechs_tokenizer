@@ -1,5 +1,7 @@
 """Validate the contents of a built distribution wheel before publication."""
 import argparse
+import base64
+import hashlib
 import csv
 import io
 import json
@@ -44,6 +46,22 @@ def inspect_wheel(wheel_path):
         recorded = {row[0] for row in record_rows if row}
         if not REQUIRED <= recorded:
             raise ValueError("Wheel RECORD omits required package files")
+        for row in record_rows:
+            if len(row) != 3:
+                raise ValueError("Malformed wheel RECORD row")
+            name, digest, declared_size = row
+            if name not in names:
+                raise ValueError(f"Wheel RECORD refers to missing member: {name}")
+            if name == records[0]:
+                continue  # RECORD is intentionally unhashed by wheel conventions.
+            if not digest.startswith("sha256="):
+                raise ValueError(f"Missing SHA-256 digest for wheel member: {name}")
+            payload = archive.read(name)
+            expected = base64.urlsafe_b64encode(hashlib.sha256(payload).digest()).rstrip(b"=").decode("ascii")
+            if digest[7:] != expected:
+                raise ValueError(f"Wheel RECORD hash mismatch: {name}")
+            if not declared_size.isdecimal() or int(declared_size) != len(payload):
+                raise ValueError(f"Wheel RECORD size mismatch: {name}")
         return {"wheel": str(wheel_path), "required_files": len(REQUIRED),
                 "metadata_path": metadata_paths[0], "valid": True}
 
