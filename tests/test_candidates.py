@@ -38,6 +38,31 @@ class CandidateTests(unittest.TestCase):
             for a in wordAnalyzer("كتابهم")["analyses"]
         ))
 
+    def test_compound_preposition_article(self):
+        for word, expected in (
+            ("وبالكتاب", ["و", "ب", "ال", "كتاب"]),
+            ("فبالكتاب", ["ف", "ب", "ال", "كتاب"]),
+            ("وكالمفتاح", ["و", "ك", "ال", "مفتاح"]),
+            ("فكالمفتاح", ["ف", "ك", "ال", "مفتاح"]),
+        ):
+            with self.subTest(word=word):
+                self.assertEqual(tokenize(word), expected)
+                self.assertEqual("".join(expected), word)
+
+    def test_third_person_singular_pronoun(self):
+        analysis = wordAnalyzer("كتابه")["analyses"]
+        self.assertTrue(any(a["root"] == "كتب"
+                            and a["part_of_speech"] == "noun"
+                            and [s["surface"] for s in a["suffixes"]] == ["ه"]
+                            for a in analysis))
+        self.assertEqual(tokenize("كتابه"), ["كتاب", "ه"])
+
+    def test_compound_article_possessive_stays_rejected(self):
+        for word in ("وبالكتابهم", "فبالكتابه", "وكالمفتاحها"):
+            with self.subTest(word=word):
+                self.assertEqual(wordAnalyzer(word)["analyses"], [])
+                self.assertEqual(tokenize(word), [word])
+
     def test_future_false_positive_rejected(self):
         self.assertEqual(wordAnalyzer("سكتب")["analyses"], [])
 
