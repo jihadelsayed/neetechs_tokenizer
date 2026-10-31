@@ -103,7 +103,7 @@ class TimeoutDiagnosticsTests(unittest.TestCase):
                 with patch.object(verify_release.subprocess, "run", side_effect=error):
                     with contextlib.redirect_stdout(io.StringIO()):
                         result = verify_release.main()
-            report = json.loads((Path(directory) / "release-check-results.json").read_text(encoding="utf-8"))
+                report = json.loads((Path(directory) / "release-check-results.json").read_text(encoding="utf-8"))
         self.assertEqual(result, 1)
         self.assertEqual(report["checks"]["unit_tests"]["exit_code"], 124)
         self.assertIn("partial output", report["checks"]["unit_tests"]["output"])
