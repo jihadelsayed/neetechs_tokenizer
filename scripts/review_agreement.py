@@ -20,7 +20,7 @@ def adjudicate(reviews_a, reviews_b):
             if status == "annotated":
                 roots = case.get("roots")
                 if not isinstance(roots, list) or not roots or any(
-                    not isinstance(root, str) or not root.strip() for root in roots
+                    not isinstance(root, str) or not root.strip() or root != root.strip() for root in roots
                 ) or len(roots) != len(set(roots)):
                     raise ValueError(f"Invalid root annotation: {word!r}")
                 if case.get("reason") is not None:
