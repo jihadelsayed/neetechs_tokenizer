@@ -5,6 +5,7 @@ the remaining stem is validated against the reviewed lexicon.
 """
 from dataclasses import dataclass
 from .affixes import PREFIXES, SUFFIXES
+from .validation import compatible_affixes, reconstructs_surface
 
 
 @dataclass(frozen=True)
@@ -32,15 +33,14 @@ def priority_identifier(word: str) -> list[Candidate]:
                 continue
             end = len(word) - len(ending) if ending else len(word)
             stem = word[len(prefix):end]
-            if not stem or prefix + stem + ending != word:
+            if not reconstructs_surface(word, prefix_parts, stem, ending_parts):
                 continue
             allowed = tuple(pos for pos in prefix_pos if pos in suffix_pos)
             if not allowed:
                 continue
-            # The definite article and a possessive suffix cannot coexist
-            # on the same noun. Reject this impossible candidate early.
-            if ("ال" in prefix_parts and
-                    any(label.startswith("possessive-or-object:") for label in labels)):
+            allowed = tuple(pos for pos in allowed
+                            if compatible_affixes(prefix_parts, labels, pos))
+            if not allowed:
                 continue
             # The definite article cannot attach to verbs. A future
             # marker cannot be applied to bare perfect dictionary stems.
