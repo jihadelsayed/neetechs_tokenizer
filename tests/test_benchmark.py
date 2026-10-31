@@ -105,6 +105,40 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(partial["tie_aware_top_accuracy"], 0.0)
         self.assertEqual(both["tie_aware_top_accuracy"], 1.0)
 
+    def test_diagnostic_error_categories(self):
+        scenarios = {
+            "ok": [{"root": "كتب", "score": 0.9}],
+            "wrong": [{"root": "علم", "score": 0.9}, {"root": "كتب", "score": 0.2}],
+            "missing": [{"root": "علم", "score": 0.9}],
+            "tie": [{"root": "كتب", "score": 0.9}, {"root": "علم", "score": 0.9}],
+            "none": [],
+        }
+        def analyzer(word):
+            return {"analyses": scenarios[word]}
+        with patch("neetechs_tokenizer.benchmark.word_analyzer", side_effect=analyzer):
+            result = benchmark_cases([{"word": word, "root": "كتب"} for word in scenarios])
+        self.assertEqual(result["total"], 5)
+        self.assertEqual(result["error_category_counts"], {
+            "abstained": 1, "wrong_top_root": 2,
+            "ambiguous_top_root": 1, "expected_root_missing": 1,
+        })
+        self.assertEqual(result["selective_coverage"], 3 / 5)
+        self.assertEqual(result["selective_accuracy"], 1 / 3)
+        self.assertEqual(result["case_results"][0]["error_categories"], [])
+        self.assertEqual(result["case_results"][1]["error_categories"], ["wrong_top_root"])
+        self.assertEqual(result["case_results"][2]["error_categories"],
+                         ["wrong_top_root", "expected_root_missing"])
+        self.assertEqual(result["case_results"][3]["error_categories"],
+                         ["ambiguous_top_root"])
+        self.assertEqual(result["case_results"][4]["error_categories"], ["abstained"])
+
+    def test_all_abstain_has_no_selective_accuracy(self):
+        with patch("neetechs_tokenizer.benchmark.word_analyzer",
+                   return_value={"analyses": []}):
+            result = benchmark_cases([{"word": "unknown", "root": "كتب"}])
+        self.assertIsNone(result["selective_accuracy"])
+        self.assertEqual(result["selective_coverage"], 0.0)
+
     def test_empty(self):
         with self.assertRaisesRegex(ValueError, "nonempty"):
             benchmark_cases([])
