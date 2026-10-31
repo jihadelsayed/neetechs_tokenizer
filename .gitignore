@@ -181,3 +181,4 @@ cython_debug/
 .cursorindexingignore
 # Local release test artifact
 release-check-results.json
+release-readiness-results.json
