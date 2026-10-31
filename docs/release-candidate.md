@@ -10,6 +10,7 @@ python -m pip install --upgrade pip setuptools wheel
 python scripts/verify_release.py
 python -m pip wheel . --no-deps --no-build-isolation --wheel-dir dist
 python scripts/check_wheel.py (Get-ChildItem dist/*.whl | Select-Object -First 1).FullName
+python scripts/smoke_installed_wheel.py (Get-ChildItem dist/*.whl | Select-Object -First 1).FullName
 ```
 
 A wheel integrity check confirms source modules, the lexicon, regression data,
@@ -17,3 +18,4 @@ wheel metadata, and the wheel file list are present. This is **not** a substitut
 for installed-wheel smoke testing on a clean Python environment, linguistic
 validation, or the full release checks. Do not publish a stable release if any
 gate fails. Python test output is saved in `release-check-results.json`.
+\nThe installed-wheel smoke test creates a temporary isolated Python virtual environment, installs the wheel offline, imports the installed package, and verifies its public API and bundled JSON. It automatically deletes the virtual environment. Passing it does not establish Arabic linguistic accuracy.\n
