@@ -38,7 +38,6 @@ def run_evaluation(dataset, manifest, *, revision=None):
             f"{actual_revision} != {verified['frozen_commit']}"
         )
     payload = json.loads(Path(dataset).read_text(encoding="utf-8"))
-    results = benchmark_cases(payload["cases"])
     cases = payload["cases"]
     exclusions = payload.get("exclusions", [])
     audit = payload.get("audit", {})
@@ -63,6 +62,8 @@ def run_evaluation(dataset, manifest, *, revision=None):
         if not (exclusion.get("reason") or
                 (exclusion.get("reviewer_a_reason") and exclusion.get("reviewer_b_reason"))):
             raise ValueError("Excluded word is missing reviewer reasons")
+    # Never invoke the analyzer before the complete review denominator is validated.
+    results = benchmark_cases(cases)
     review_metrics = {
         "total_reviewed": total,
         "included_cases": len(cases),
