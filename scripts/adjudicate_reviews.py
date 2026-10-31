@@ -20,15 +20,23 @@ def resolve_reviews(reviewer_a, reviewer_b, decisions):
         rationale = decision.get("rationale")
         if word not in unresolved or word in decided:
             raise ValueError(f"Unexpected or duplicate adjudication: {word}")
-        if not isinstance(roots, list) or not roots or any(
-            not isinstance(r, str) or not r.strip() for r in roots
-        ) or len(roots) != len(set(roots)):
-            raise ValueError(f"Invalid adjudicated roots: {word}")
+        status = decision.get("status", "annotated")
+        if status == "annotated":
+            if not isinstance(roots, list) or not roots or any(
+                not isinstance(r, str) or not r.strip() for r in roots
+            ) or len(roots) != len(set(roots)):
+                raise ValueError(f"Invalid adjudicated roots: {word}")
+        elif status in ("uncertain", "out_of_scope"):
+            if roots not in (None, []):
+                raise ValueError("Excluded adjudications must not assert roots")
+            roots = []
+        else:
+            raise ValueError(f"Invalid adjudication status: {status}")
         if not isinstance(reviewer, str) or not reviewer.strip():
             raise ValueError("Missing adjudicator")
         if not isinstance(rationale, str) or not rationale.strip():
             raise ValueError("Missing adjudication rationale")
-        decided[word] = {"word": word, "roots": sorted(roots),
+        decided[word] = {"word": word, "roots": sorted(roots), "status": status,
                          "adjudicator": reviewer, "rationale": rationale,
                          "reviewer_a": unresolved[word]["reviewer_a"],
                          "reviewer_b": unresolved[word]["reviewer_b"]}
@@ -37,13 +45,22 @@ def resolve_reviews(reviewer_a, reviewer_b, decisions):
         raise ValueError(f"Unresolved disagreements: {missing}")
     final_cases = sorted(comparison["agreed_cases"] + [
         {"word": item["word"], "roots": item["roots"]}
-        for item in decided.values()
+        for item in decided.values() if item["status"] == "annotated"
+    ], key=lambda case: case["word"])
+    exclusions = sorted(comparison["agreed_exclusions"] + [
+        {"word": item["word"], "status": item["status"],
+         "reason": item["rationale"]}
+        for item in decided.values() if item["status"] != "annotated"
     ], key=lambda case: case["word"])
     return {"schema_version": 1,
             "metadata": {"status": "adjudicated_not_independently_verified",
                          "note": "Manual provenance, reviewer independence, frozen model and holdout separation still require verification."},
             "cases": final_cases,
+            "exclusions": exclusions,
             "audit": {"agreement_rate": comparison["agreement_rate"],
+                      "total_reviewed": comparison["total"],
+                      "included_cases": len(final_cases),
+                      "excluded_cases": len(exclusions),
                       "original_disagreements": comparison["disagreements"],
                       "adjudications": list(decided.values())}}
 
