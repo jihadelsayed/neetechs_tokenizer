@@ -18,6 +18,9 @@ def run(command):
 def check_release(*, output_dir=None):
     destination = output_dir or ROOT / "dist"
     destination.mkdir(parents=True, exist_ok=True)
+    # Enforce freshness for both CLI and direct Python callers.
+    if any(destination.glob("neetechs_tokenizer-*.whl")):
+        raise ValueError("Output directory already has matching wheels; use a clean directory")
     checks = {}
     checks["release_tests"] = run([sys.executable, "scripts/verify_release.py"])
     if checks["release_tests"]["passed"]:
