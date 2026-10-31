@@ -28,6 +28,29 @@ class VerbFormTests(unittest.TestCase):
         self.assertEqual((a[0]["root"], a[0]["tense"]), ("كتب", "imperative"))
         self.assertEqual(analyze_imperative("افتح")[0]["root"], "فتح")
 
+    def test_reviewed_imperative_person_number_gender(self):
+        forms = (
+            ("اكتبي", "كتب", "singular", "feminine"),
+            ("اكتبا", "كتب", "dual", None),
+            ("اكتبوا", "كتب", "plural", "masculine"),
+            ("افتحي", "فتح", "singular", "feminine"),
+            ("افتحا", "فتح", "dual", None),
+            ("افتحوا", "فتح", "plural", "masculine"),
+        )
+        for surface, root, number, gender in forms:
+            with self.subTest(surface=surface):
+                analyses = analyze_imperative(surface)
+                self.assertEqual(len(analyses), 1)
+                self.assertEqual((analyses[0]["root"], analyses[0]["person"],
+                                  analyses[0]["number"], analyses[0]["gender"]),
+                                 (root, 2, number, gender))
+                self.assertTrue(any(a.get("tense") == "imperative"
+                                    and a["root"] == root
+                                    for a in wordAnalyzer(surface)["analyses"]))
+
+    def test_unsupported_imperative_is_not_fabricated(self):
+        self.assertEqual(analyze_imperative("اغسلوا"), [])
+
     def test_no_invented_forms(self):
         self.assertEqual(analyze_imperfect("يذهب"), [])
         self.assertEqual(analyze_imperative("اقرأ"), [])
