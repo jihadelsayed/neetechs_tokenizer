@@ -15,7 +15,7 @@
 
 ## Input and submission contract
 
-Input contains `schema_version: 1` and `cases`, each with a `word` and optionally `context`. Submit `cases` in the same word set with `roots: ["..."]` for every in-scope word. The current `review_agreement.py` only supports nonempty roots and does **not** support abstentions or out-of-scope cases: keep those in a separate exclusion log, and do not silently drop them or report a benchmark until the tooling is extended. Reviewer identities and provenance belong in an access-controlled manifest, not in public evaluation examples.
+Input contains `schema_version: 1` and `cases`, each with a `word` and optionally `context`. Submit `cases` in the same word set with `roots: ["..."]` for every in-scope word. For an in-scope form, submit `roots: ["..."]`. For an uncertain or out-of-scope form, submit `status: "uncertain"` or `status: "out_of_scope"` with a nonempty `reason` and no roots. The comparison workflow preserves exclusions and the adjudication workflow records the included and excluded case counts. Do not interpret root-only benchmark accuracy as covering excluded forms. Reviewer identities and provenance belong in an access-controlled manifest, not in public evaluation examples.
 
 ## Reviewer checklist
 
