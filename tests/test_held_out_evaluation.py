@@ -88,8 +88,10 @@ class HeldOutEvaluationTests(unittest.TestCase):
         manifest = json.loads(self.manifest.read_text(encoding="utf-8"))
         manifest["dataset_sha256"] = hashlib.sha256(self.dataset.read_bytes()).hexdigest()
         self.manifest.write_text(json.dumps(manifest), encoding="utf-8")
-        with self.assertRaisesRegex(ValueError, "reconcile"):
-            run_evaluation(self.dataset, self.manifest, revision="a" * 40)
+        with patch("scripts.run_held_out_evaluation.benchmark_cases") as benchmark:
+            with self.assertRaisesRegex(ValueError, "reconcile"):
+                run_evaluation(self.dataset, self.manifest, revision="a" * 40)
+            benchmark.assert_not_called()
 
     def test_rejects_different_source_revision(self):
         with self.assertRaisesRegex(ValueError, "differs"):
