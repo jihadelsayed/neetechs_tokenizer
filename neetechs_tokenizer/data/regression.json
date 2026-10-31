@@ -279,6 +279,36 @@
       "tokens": [
         "وبالكتابهم"
       ]
+    },
+    {
+      "word": "اكتبي",
+      "root": "كتب",
+      "tense": "imperative"
+    },
+    {
+      "word": "اكتبا",
+      "root": "كتب",
+      "tense": "imperative"
+    },
+    {
+      "word": "اكتبوا",
+      "root": "كتب",
+      "tense": "imperative"
+    },
+    {
+      "word": "افتحي",
+      "root": "فتح",
+      "tense": "imperative"
+    },
+    {
+      "word": "افتحا",
+      "root": "فتح",
+      "tense": "imperative"
+    },
+    {
+      "word": "افتحوا",
+      "root": "فتح",
+      "tense": "imperative"
     }
   ]
 }
