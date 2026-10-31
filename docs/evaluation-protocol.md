@@ -56,3 +56,27 @@ accepted; `expected_root_missing` means none of the predictions contains an
 accepted root. Error category counts must **not** be summed as if they are
 disjoint. Accuracy still refers exclusively to the supplied labels;
 `data/evaluation_seed.json` is unreviewed and is **not** a verified test set.
+
+## Frozen dataset provenance gate
+
+The adjudicated dataset is not automatically a verified independent benchmark.
+Store its SHA-256 digest, full frozen analyzer Git commit, source, license,
+language variety, collection date, annotation guide and reviewer IDs in a
+separate JSON manifest. The manifest must also contain explicit boolean
+confirmations for blind review, held-out separation and frozen-code inspection.
+Generate the hash from the final, immutable dataset file, not from a JSON
+re-serialization. For example:
+
+```powershell
+(Get-FileHash data/held_out_adjudicated.json -Algorithm SHA256).Hash.ToLowerInvariant()
+python scripts/verify_evaluation_provenance.py data/held_out_adjudicated.json data/held_out_manifest.json
+```
+
+Manifest keys: `dataset_sha256`, `frozen_commit`, `source`, `license`,
+`language_variety`, `collection_date`, `annotation_guide`,
+`reviewer_a`, `reviewer_b`, `adjudicator`,
+`blind_review_confirmed`, `held_out_from_tuning_confirmed`, and
+`frozen_code_verified`. Never mark a confirmation as true without evidence.
+The checker validates declared metadata and file integrity, **not** reviewer
+independence, source authenticity or the existence of a Git commit. Keep any
+reviewer-private personal information out of the published manifest.
