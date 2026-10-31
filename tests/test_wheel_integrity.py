@@ -68,6 +68,25 @@ class WheelVerificationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "hash mismatch"):
                 inspect_wheel(path)
 
+    def test_unrecorded_extra_file_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "package.whl"
+            self.make_wheel(path)
+            with ZipFile(path, "a") as archive:
+                archive.writestr("neetechs_tokenizer/extra.py", "print('unexpected')")
+            with self.assertRaisesRegex(ValueError, "file lists differ"):
+                inspect_wheel(path)
+
+    def test_duplicate_archive_member_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "package.whl"
+            self.make_wheel(path)
+            with ZipFile(path, "a") as archive:
+                archive.writestr("neetechs_tokenizer/new.py", "one")
+                archive.writestr("neetechs_tokenizer/new.py", "two")
+            with self.assertRaisesRegex(ValueError, "duplicate archive"):
+                inspect_wheel(path)
+
     def test_missing_bundled_lexicon_fails(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "package.whl"
