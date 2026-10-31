@@ -28,12 +28,23 @@ class ReleaseReadinessTests(unittest.TestCase):
         self.assertFalse(status["code_release_checks_passed"])
         self.assertFalse(status["checks"]["wheel_integrity"]["passed"])
 
+    def test_preexisting_wheel_rejected_for_direct_callers(self):
+        with tempfile.TemporaryDirectory() as temp:
+            (Path(temp) / "neetechs_tokenizer-old.whl").write_bytes(b"stale")
+            with patch("scripts.check_release_readiness.run") as runner:
+                with self.assertRaisesRegex(ValueError, "clean directory"):
+                    check_release(output_dir=Path(temp))
+            runner.assert_not_called()
+
     def test_manual_review_always_required_even_if_code_passes(self):
         with tempfile.TemporaryDirectory() as temp:
             wheel = Path(temp) / "neetechs_tokenizer-0.9.29-py3-none-any.whl"
-            wheel.write_bytes(b"test")
-            with patch("scripts.check_release_readiness.run",
-                       return_value={"passed": True, "exit_code": 0, "output": "OK"}):
+            def fake_run(command):
+                if "wheel" in command and "--wheel-dir" in command:
+                    wheel.write_bytes(b"test")
+                return {"passed": True, "exit_code": 0, "output": "OK"}
+
+            with patch("scripts.check_release_readiness.run", side_effect=fake_run):
                 status = check_release(output_dir=Path(temp))
         self.assertTrue(status["code_release_checks_passed"])
         self.assertFalse(status["stable_v1_release_approved"])
