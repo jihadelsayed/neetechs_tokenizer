@@ -45,6 +45,23 @@ class ReleaseGateTests(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertIn("[unit_tests] FAIL", out)
 
+    def test_syntax_compile_failure_blocks_release(self):
+        import json
+        import subprocess
+        def fake_run(command, **kwargs):
+            if "compileall" in command:
+                return subprocess.CompletedProcess(command, 1, stdout="SyntaxError")
+            return subprocess.CompletedProcess(command, 0,
+                                               stdout="Ran 3 tests in 0.001s\\nOK")
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(verify_release, "ROOT", Path(directory)):
+                with patch.object(verify_release.subprocess, "run", side_effect=fake_run):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        status = verify_release.main()
+            report = json.loads((Path(directory) / "release-check-results.json").read_text())
+        self.assertEqual(status, 1)
+        self.assertFalse(report["checks"]["syntax_compile"]["passed"])
+
     def test_nonzero_exit_fails(self):
         status, out = self.check("Ran 3 tests in 0.001s\nFAILED", 1)
         self.assertEqual(status, 1)
