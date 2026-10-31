@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "name": "Arabic morphology evaluation seed",
+    "status": "draft_unreviewed",
+    "source": "Manually assembled candidate examples; NOT independently annotated or validated",
+    "evaluation_policy": "Exclude from training, lexicon additions, and tuning; obtain at least two independent Arabic linguistic annotations before reporting benchmark accuracy."
+  },
+  "cases": [
+    {
+      "word": "والدارس",
+      "roots": [
+        "درس"
+      ]
+    },
+    {
+      "word": "فالمفتاح",
+      "roots": [
+        "فتح"
+      ]
+    },
+    {
+      "word": "بالمنظور",
+      "roots": [
+        "نظر"
+      ]
+    },
+    {
+      "word": "وكالمرسوم",
+      "roots": [
+        "رسم"
+      ]
+    },
+    {
+      "word": "فبالكتاب",
+      "roots": [
+        "كتب"
+      ]
+    },
+    {
+      "word": "وحامل",
+      "roots": [
+        "حمل"
+      ]
+    },
+    {
+      "word": "المزروع",
+      "roots": [
+        "زرع"
+      ]
+    },
+    {
+      "word": "غاسل",
+      "roots": [
+        "غسل"
+      ]
+    },
+    {
+      "word": "ومفهوم",
+      "roots": [
+        "فهم"
+      ]
+    },
+    {
+      "word": "المطلوب",
+      "roots": [
+        "طلب"
+      ]
+    },
+    {
+      "word": "مكتبة",
+      "roots": [
+        "كتب"
+      ]
+    },
+    {
+      "word": "مدرسة",
+      "roots": [
+        "درس"
+      ]
+    },
+    {
+      "word": "الطلاب",
+      "roots": [
+        "طلب"
+      ]
+    },
+    {
+      "word": "الحديقة",
+      "roots": [
+        "حدق"
+      ]
+    },
+    {
+      "word": "المستشفى",
+      "roots": [
+        "شفي"
+      ]
+    },
+    {
+      "word": "سيكتب",
+      "roots": [
+        "كتب"
+      ]
+    },
+    {
+      "word": "يستعملون",
+      "roots": [
+        "عمل"
+      ]
+    },
+    {
+      "word": "اشربوا",
+      "roots": [
+        "شرب"
+      ]
+    },
+    {
+      "word": "معلومات",
+      "roots": [
+        "علم"
+      ]
+    },
+    {
+      "word": "المزارعون",
+      "roots": [
+        "زرع"
+      ]
+    }
+  ]
+}
