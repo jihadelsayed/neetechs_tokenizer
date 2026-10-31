@@ -23,6 +23,10 @@ class WheelVerificationTests(unittest.TestCase):
         files["neetechs_tokenizer-0.9.29.dist-info/METADATA"] = (
             "Metadata-Version: 2.1\nName: neetechs_tokenizer\nVersion: 0.9.29\n"
         )
+        if "WHEEL" not in omit:
+            files["neetechs_tokenizer-0.9.29.dist-info/WHEEL"] = (
+                "Wheel-Version: 1.0\\nGenerator: test fixture\\nRoot-Is-Purelib: true\\nTag: py3-none-any\\n"
+            )
         records = "neetechs_tokenizer-0.9.29.dist-info/RECORD"
         stream = io.StringIO()
         writer = csv.writer(stream)
@@ -41,6 +45,13 @@ class WheelVerificationTests(unittest.TestCase):
             path = Path(directory) / "package.whl"
             self.make_wheel(path)
             self.assertTrue(inspect_wheel(path)["valid"])
+
+    def test_missing_wheel_metadata_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "package.whl"
+            self.make_wheel(path, {"WHEEL"})
+            with self.assertRaisesRegex(ValueError, "wheel_count=0"):
+                inspect_wheel(path)
 
     def test_corrupted_wheel_member_fails(self):
         with tempfile.TemporaryDirectory() as directory:
