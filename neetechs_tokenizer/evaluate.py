@@ -15,6 +15,8 @@ from .tokenizer import tokenize
 def evaluate_cases(cases: list[dict]) -> dict:
     if not isinstance(cases, list):
         raise TypeError("cases must be a list")
+    if not cases:
+        raise ValueError("Regression evaluation requires at least one case")
     failures = []
     positive = negative = correct_positive = correct_negative = 0
     token_checks = token_correct = 0
