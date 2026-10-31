@@ -5,9 +5,14 @@ This command deliberately does not claim independent accuracy certification.
 import argparse
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+# Direct file execution sets sys.path[0] to scripts/, not the repo root.
+# The installed/module entry point keeps the normal import resolution.
+if __package__ in (None, "") and str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from neetechs_tokenizer.benchmark import benchmark_cases
 if __package__:
