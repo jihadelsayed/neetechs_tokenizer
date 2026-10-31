@@ -33,3 +33,26 @@ along with the exact immutable code and evaluation-set versions.
 The seed intentionally contains forms that current implementation may not
 support: that is useful for identifying vocabulary gaps, **not** grounds to
 quietly add them to the model and then score on the same holdout.
+
+## Diagnostic metrics (Step 5)
+
+The benchmark preserves the earlier `coverage`, `top_one_root_accuracy`,
+`root_recall_at_any_candidate`, `tie_aware_top_accuracy`, and
+`unambiguous_top_root_accuracy` fields.
+
+Additional metrics:
+- `selective_coverage`: fraction of examples with exactly one highest-scoring
+  distinct root. This excludes both abstentions and tied top roots.
+- `selective_accuracy`: accepted-root correctness among those uniquely ranked
+  examples; null if there are none.
+- `case_results`: word-by-word expected roots, all predicted roots, highest
+  ranked roots, top-one result, and diagnostic error labels.
+- `error_category_counts`: counts of nonexclusive diagnostics.
+
+Diagnostics can overlap. `abstained` means no analysis;
+`wrong_top_root` means the deterministically selected top root was not
+accepted; `ambiguous_top_root` means tied highest-ranked roots are not all
+accepted; `expected_root_missing` means none of the predictions contains an
+accepted root. Error category counts must **not** be summed as if they are
+disjoint. Accuracy still refers exclusively to the supplied labels;
+`data/evaluation_seed.json` is unreviewed and is **not** a verified test set.
