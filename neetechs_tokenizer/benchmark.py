@@ -37,6 +37,8 @@ def benchmark_cases(cases):
     uniquely_ranked = 0
     tie_aware_correct = 0
     errors = []
+    case_results = []
+    error_counts = {"abstained": 0, "wrong_top_root": 0, "ambiguous_top_root": 0, "expected_root_missing": 0}
     for index, case in enumerate(cases):
         if not isinstance(case, dict) or not isinstance(case.get("word"), str) or not case["word"].strip():
             raise ValueError(f"Case {index} requires a nonempty word")
@@ -67,10 +69,33 @@ def benchmark_cases(cases):
                     unique_top_correct += 1
         if roots:
             supported += 1
-        if bool(expected & roots):
+        found_expected = bool(expected & roots)
+        if found_expected:
             correct += 1
         else:
             errors.append({"index": index, "word": case["word"], "expected_roots": sorted(expected), "predicted_roots": sorted(roots)})
+        categories = []
+        if not roots:
+            categories.append("abstained")
+        else:
+            if top_root not in expected:
+                categories.append("wrong_top_root")
+            if len(top_roots) > 1 and not top_roots <= expected:
+                categories.append("ambiguous_top_root")
+            if not found_expected:
+                categories.append("expected_root_missing")
+        for category in categories:
+            error_counts[category] += 1
+        case_results.append({
+            "index": index, "word": case["word"],
+            "expected_roots": sorted(expected),
+            "predicted_roots": sorted(roots),
+            "top_roots": sorted(top_roots),
+            "top_one_root": top_root,
+            "top_one_correct": top_root in expected if top_root else False,
+            "expected_in_candidates": found_expected,
+            "error_categories": categories,
+        })
     n = len(cases)
     return {"total": n, "root_recall_at_any_candidate": correct / n if n else None,
             "coverage": supported / n if n else None,
@@ -85,6 +110,10 @@ def benchmark_cases(cases):
             "top_root_tie_cases": ambiguous_top,
             "top_one_errors": n - top_one_correct,
             "errors": errors,
+            "error_category_counts": error_counts,
+            "case_results": case_results,
+            "selective_accuracy": unique_top_correct / uniquely_ranked if uniquely_ranked else None,
+            "selective_coverage": uniquely_ranked / n,
             "note": "Measured only against the supplied annotations. No claim of independently verified labels."}
 
 
