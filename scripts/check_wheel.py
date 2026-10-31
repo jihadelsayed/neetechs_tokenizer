@@ -46,6 +46,13 @@ def inspect_wheel(wheel_path):
         recorded = {row[0] for row in record_rows if row}
         if not REQUIRED <= recorded:
             raise ValueError("Wheel RECORD omits required package files")
+        if len(archive.namelist()) != len(names):
+            raise ValueError("Wheel contains duplicate archive members")
+        record_names = [row[0] for row in record_rows if row]
+        if len(record_names) != len(set(record_names)):
+            raise ValueError("Wheel RECORD contains duplicate entries")
+        if recorded != names:
+            raise ValueError("Wheel archive and RECORD file lists differ")
         for row in record_rows:
             if len(row) != 3:
                 raise ValueError("Malformed wheel RECORD row")
