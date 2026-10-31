@@ -28,11 +28,18 @@ def inspect_wheel(wheel_path):
         metadata_paths = [name for name in names
                           if name.endswith(".dist-info/METADATA")]
         records = [name for name in names if name.endswith(".dist-info/RECORD")]
-        if missing or len(metadata_paths) != 1 or len(records) != 1:
+        wheel_metadata = [name for name in names if name.endswith(".dist-info/WHEEL")]
+        if missing or len(metadata_paths) != 1 or len(records) != 1 or len(wheel_metadata) != 1:
             raise ValueError(
                 f"Invalid wheel: missing={missing}, "
-                f"metadata_count={len(metadata_paths)}, record_count={len(records)}"
+                f"metadata_count={len(metadata_paths)}, record_count={len(records)}, wheel_count={len(wheel_metadata)}"
             )
+        if any(path.rsplit("/", 1)[0] != metadata_paths[0].rsplit("/", 1)[0]
+               for path in (records[0], wheel_metadata[0])):
+            raise ValueError("Wheel metadata files must share the same dist-info directory")
+        wheel_headers = archive.read(wheel_metadata[0]).decode("utf-8")
+        if "Wheel-Version:" not in wheel_headers or "Tag:" not in wheel_headers:
+            raise ValueError("Wheel is missing required WHEEL metadata headers")
         metadata = archive.read(metadata_paths[0]).decode("utf-8")
         if "Name: neetechs_tokenizer" not in metadata and "Name: neetechs-tokenizer" not in metadata:
             raise ValueError("Wheel contains unexpected distribution metadata")
