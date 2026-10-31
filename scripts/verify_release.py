@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = (
+    ("syntax_compile", [sys.executable, "-m", "compileall", "-q", "neetechs_tokenizer", "tests", "scripts"]),
     ("unit_tests", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"]),
     ("morphology_regression", [sys.executable, "-m", "neetechs_tokenizer.evaluate"]),
 )
