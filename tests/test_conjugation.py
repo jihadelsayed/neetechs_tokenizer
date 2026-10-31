@@ -5,8 +5,26 @@ from neetechs_tokenizer import word_analyzer, analyze_perfect, tokenize
 class ConjugationTests(unittest.TestCase):
     def test_first_plural(self):
         result = analyze_perfect("كتبنا")
-        self.assertEqual(len(result), 1)
-        self.assertEqual((result[0]["root"], result[0]["person"], result[0]["number"]), ("كتب", 1, "plural"))
+        self.assertEqual(len(result), 2)
+        self.assertEqual({x["root"] for x in result}, {"كتب"})
+        self.assertEqual(
+            {(x["person"], x["number"], tuple(s["function"] for s in x["suffixes"]))
+             for x in result},
+            {(1, "plural", ("perfect_subject",)),
+             (3, "singular", ("perfect_object:1pl",))}
+        )
+
+    def test_na_ambiguity_preserved_in_main_api(self):
+        result = [a for a in word_analyzer("كتبنا")["analyses"]
+                  if a.get("tense") == "perfect"]
+        self.assertTrue(any(a["person"] == 1 and a["number"] == "plural"
+                            for a in result))
+        self.assertTrue(any(a["person"] == 3 and
+                            a["suffixes"][0]["function"] == "perfect_object:1pl"
+                            for a in result))
+
+    def test_na_ambiguity_requires_reviewed_verb(self):
+        self.assertEqual(analyze_perfect("ذهبنا"), [])
 
     def test_ambiguous_t_suffix(self):
         result = analyze_perfect("كتبت")
