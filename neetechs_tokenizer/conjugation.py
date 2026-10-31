@@ -43,4 +43,20 @@ def analyze_perfect(word: str) -> list[dict]:
                     "gender": gender, "source": "perfect_conjugation_rule",
                     "score": 0.92 if ending else 0.89,
                 })
+    # Unvowelled نا also permits a 3ms perfect verb + 1pl object pronoun:
+    # كتبنا = katabna (we wrote) OR katabanā (he wrote us).
+    # Do not force one reading without vowels or sentence context.
+    if normalized.endswith("نا"):
+        stem = normalized[:-2]
+        for root, pattern, pos in load_lexicon().get(stem, ()):
+            if pos != "verb" or pattern not in ("فعل", "استفعل"):
+                continue
+            results.append({
+                "root": root, "pattern": pattern, "stem": stem,
+                "part_of_speech": "verb", "prefixes": [],
+                "suffixes": [{"surface": "نا", "function": "perfect_object:1pl"}],
+                "tense": "perfect", "person": 3, "number": "singular",
+                "gender": "masculine", "source": "perfect_object_pronoun_rule",
+                "score": 0.92,
+            })
     return results
