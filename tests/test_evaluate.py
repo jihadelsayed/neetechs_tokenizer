@@ -42,9 +42,8 @@ class QualityGateTests(unittest.TestCase):
         self.assertIn("not true negatives", result["note"])
 
     def test_empty_dataset(self):
-        result = evaluate_cases([])
-        self.assertTrue(result["passed"])
-        self.assertIsNone(result["pass_rate"])
+        with self.assertRaisesRegex(ValueError, "at least one case"):
+            evaluate_cases([])
 
 
 if __name__ == "__main__":
