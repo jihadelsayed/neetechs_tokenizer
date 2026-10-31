@@ -38,6 +38,17 @@ class WheelVerificationTests(unittest.TestCase):
             self.make_wheel(path)
             self.assertTrue(inspect_wheel(path)["valid"])
 
+    def test_corrupted_wheel_member_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "package.whl"
+            self.make_wheel(path)
+            data = path.read_bytes()
+            # ZIP_STORED fixture: alter file payload but leave its recorded CRC.
+            self.assertIn(b"# test fixture", data)
+            path.write_bytes(data.replace(b"# test fixture", b"! test fixture", 1))
+            with self.assertRaisesRegex(ValueError, "Corrupted wheel"):
+                inspect_wheel(path)
+
     def test_missing_bundled_lexicon_fails(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "package.whl"
