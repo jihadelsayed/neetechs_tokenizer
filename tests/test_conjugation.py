@@ -26,6 +26,33 @@ class ConjugationTests(unittest.TestCase):
     def test_na_ambiguity_requires_reviewed_verb(self):
         self.assertEqual(analyze_perfect("ذهبنا"), [])
 
+    def test_object_pronouns_on_reviewed_perfect_verbs(self):
+        for word, root, suffix, label in (
+            ("كتبه", "كتب", "ه", "perfect_object:3ms"),
+            ("كتبها", "كتب", "ها", "perfect_object:3fs"),
+            ("كتبهم", "كتب", "هم", "perfect_object:3mp"),
+            ("فتحها", "فتح", "ها", "perfect_object:3fs"),
+            ("استكتبهم", "كتب", "هم", "perfect_object:3mp"),
+        ):
+            with self.subTest(word=word):
+                readings = [a for a in analyze_perfect(word)
+                            if a["root"] == root and
+                            [(s["surface"], s["function"]) for s in a["suffixes"]]
+                            == [(suffix, label)]]
+                self.assertEqual(len(readings), 1)
+                self.assertEqual((readings[0]["tense"], readings[0]["person"],
+                                  readings[0]["number"], readings[0]["gender"]),
+                                 ("perfect", 3, "singular", "masculine"))
+                self.assertTrue(any(
+                    a.get("tense") == "perfect" and a["root"] == root and
+                    any(s["function"] == label for s in a["suffixes"])
+                    for a in word_analyzer(word)["analyses"]))
+
+    def test_no_object_guesses_for_unreviewed_stems(self):
+        for word in ("ذهبه", "ذهبها", "ذهبهم"):
+            with self.subTest(word=word):
+                self.assertEqual(analyze_perfect(word), [])
+
     def test_ambiguous_t_suffix(self):
         result = analyze_perfect("كتبت")
         self.assertEqual(len(result), 4)
