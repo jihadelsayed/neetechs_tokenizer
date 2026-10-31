@@ -7,16 +7,26 @@ import json
 import subprocess
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+
 from neetechs_tokenizer.benchmark import benchmark_cases
 from scripts.verify_evaluation_provenance import verify_provenance
 
 
 def frozen_source_revision():
-    process = subprocess.run(
-        ["git", "rev-parse", "HEAD"], capture_output=True, text=True,
-        check=True, timeout=15,
-    )
-    return process.stdout.strip()
+    """Identify the exact checkout and reject any uncommitted source changes."""
+    revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+        text=True, check=True, timeout=15,
+    ).stdout.strip()
+    status = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all", "--",
+         "neetechs_tokenizer", "scripts", "setup.py"],
+        cwd=ROOT, capture_output=True, text=True, check=True, timeout=15,
+    ).stdout
+    if status.strip():
+        raise ValueError("Analyzer checkout has uncommitted source changes")
+    return revision
 
 
 def run_evaluation(dataset, manifest, *, revision=None):
