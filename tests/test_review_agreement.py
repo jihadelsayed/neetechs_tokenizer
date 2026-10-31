@@ -23,6 +23,16 @@ class ReviewAgreementTests(unittest.TestCase):
         b = list(reversed(a))
         self.assertEqual(adjudicate(a, b)["agreement_rate"], 1.0)
 
+    def test_rejects_whitespace_modified_frozen_words(self):
+        clean = [{"word": "كتب", "roots": ["كتب"]}]
+        for changed in (" كتب", "كتب ", "\\tكتب"):
+            with self.subTest(changed=changed):
+                altered = [{"word": changed, "roots": ["كتب"]}]
+                with self.assertRaisesRegex(ValueError, "preserved exactly"):
+                    adjudicate(altered, clean)
+                with self.assertRaisesRegex(ValueError, "preserved exactly"):
+                    adjudicate(clean, altered)
+
     def test_rejects_mismatched_or_duplicate_reviews(self):
         for a, b in [
             ([{"word": "كتب", "roots": ["كتب"]}], []),
