@@ -10,7 +10,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 from neetechs_tokenizer.benchmark import benchmark_cases
-from scripts.verify_evaluation_provenance import verify_provenance
+if __package__:
+    from .verify_evaluation_provenance import verify_provenance
+else:
+    from verify_evaluation_provenance import verify_provenance
 
 
 def frozen_source_revision():
